@@ -46,8 +46,33 @@ export const signup = async (req, res) => {
     }
 };
 
-export const login = (req, res) => {
-    res.send("login route");
+export const login = async (req, res) => {
+    const { email, password } = req.body;
+    
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({ message: "Usuário não encontrado!" });
+        };
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ message: "Senha inválida!"});
+        };
+
+        generateToken(user._id, res);
+
+        res.status(200).json({
+            _id: user._id,
+            fullName: user.fullName,
+            email: user.email,
+            profilePic: user.profilePic,
+        });
+    } catch (error) {
+        console.log("Erro ao fazer login: ", error);
+        res.status(500).json({ message: "Erro ao fazer login" });
+    }
 };
 
 export const logout = (req, res) => {
