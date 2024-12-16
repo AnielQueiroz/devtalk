@@ -8,7 +8,7 @@ export const signup = async (req, res) => {
     if (!fullName || !email || !password) {
         return res.status(400).json({ message: "Todos os campos são obrigatórios" });
     };
-   
+
     try {
         if (password.length < 6) {
             return res.status(400).json({ message: "A senha deve ter no mínimo 6 caracteres" });
@@ -48,7 +48,7 @@ export const signup = async (req, res) => {
 
 export const login = async (req, res) => {
     const { email, password } = req.body;
-    
+
     try {
         const user = await User.findOne({ email });
 
@@ -58,7 +58,7 @@ export const login = async (req, res) => {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(400).json({ message: "Senha inválida!"});
+            return res.status(400).json({ message: "Senha inválida!" });
         };
 
         generateToken(user._id, res);
@@ -76,5 +76,11 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-    res.send("logout route");
+    try {
+        res.cookie("jwt", "", { maxAge: 0 });
+        res.status(200).json({ message: "Usuário deslogado com sucesso" });
+    } catch (error) {
+        console.log("Erro ao fazer logout: ", error);
+        res.status(500).json({ message: "Erro ao fazer logout" });
+    };
 };
