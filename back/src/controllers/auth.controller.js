@@ -22,8 +22,7 @@ export const signup = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
-            fullName,
-            email,
+            fullName, email,
             password: hashedPassword,
         });
 
@@ -37,10 +36,9 @@ export const signup = async (req, res) => {
                 fullName: newUser.fullName,
                 email: newUser.email,
                 profilePic: newUser.profilePic,
-            })
-        } else {
-            return res.status(400).json({ message: "Erro ao cadastrar usuário!" })
-        }
+            });
+        };
+        return res.status(400).json({ message: "Erro ao cadastrar usuário!" })
     } catch (error) {
         console.log("Erro ao cadastrar usuário: ", error);
         return res.status(500).json({ message: "Erro ao cadastrar usuário!" });
@@ -78,7 +76,7 @@ export const logout = (req, res) => {
     } catch (error) {
         console.log("Erro ao fazer logout: ", error);
         return res.status(500).json({ message: "Erro ao fazer logout!" });
-    };
+    }
 };
 
 export const updateProfile = async (req, res) => {
