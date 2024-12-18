@@ -11,11 +11,13 @@ interface AuthState {
 	isCheckingAuth: boolean;
 	checkAuth: () => Promise<void>;
 	signUp: (data: Data) => Promise<void>;
+	login: (data: Data) => Promise<void>;
+	logout: () => Promise<void>;
 }
 
 interface Data {
 	email: string;
-	fullName: string;
+	fullName?: string;
 	password: string;
 }
 
@@ -55,6 +57,35 @@ export const useAuthStore = create<AuthState>((set) => ({
 			console.log("Erro ao fazer cadastro: ", error);
 		} finally {
 			set({ isSigningUp: false });
+		}
+	},
+
+	login: async (data): Promise<void> => {
+		set({ isLoggingIn: true });
+		try {
+			const res = await axiosInstance.post("/auth/login", data);
+			set({ authUser: res.data });
+			toast.success("Logado com sucesso!");
+		} catch (error: unknown) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message);
+			}
+			console.log("Erro ao fazer login: ", error);
+		} finally {
+			set({ isLoggingIn: false });
+		}
+	},
+
+	logout: async () => {
+		try {
+			await axiosInstance.post("/auth/logout");
+			set({ authUser: null });
+			toast.success("Deslogado com sucesso!");
+		} catch (error: unknown) {
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message);
+			}
+			console.log("Erro ao fazer logout: ", error);
 		}
 	},
 }));
