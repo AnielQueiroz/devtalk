@@ -6,12 +6,12 @@ import {
   Loader2,
   Lock,
   Mail,
-  MessageSquare,
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
+import Logo from "../components/Logo";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,10 +49,8 @@ const SignupPage = () => {
           {/*  logo */}
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
-              <div className="size-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <MessageSquare className="size-6 text-primary" />
-              </div>
-              <h1 className="text-2xl font-bold mt-2">Criar conta</h1>
+              <Logo />
+              <h1 className="text-xl font-bold mt-2">Criar conta</h1>
               <p className="text-base-content/60">
                 Crie uma conta para continuar
               </p>
