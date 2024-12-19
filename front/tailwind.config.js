@@ -18,6 +18,25 @@ export default {
 
   },
 
+  daisyui: {
+    themes: [
+      "black",
+      "synthwave",
+      "retro"
+    ]
+  },
+
+  // daisyui: {
+  //   themes: [
+  //     {
+  //       neneltheme: {
+  //         "primary": "#000000",
+  //         "secondary": "#fcd34d",
+  //       }
+  //     }
+  //   ]
+  // },
+
   plugins: [daisyui],
 
 }
