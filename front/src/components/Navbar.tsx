@@ -1,6 +1,7 @@
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessagesSquare, Settings, User } from "lucide-react";
 import { Link } from "react-router-dom";
+import Themes from "./Themes";
 
 const Navbar = () => {
 	const { authUser, logout } = useAuthStore();
@@ -8,11 +9,14 @@ const Navbar = () => {
 	return (
 		<div className="navbar bg-base-100">
 			<div className="flex-1">
-        <div className="flex gap-2 items-center">
-          <MessagesSquare className="size-6" />
-          <a href="/" className="text-xl font-bold">talkYou</a>
-        </div>
+				<div className="flex gap-2 items-center">
+					<MessagesSquare className="size-6" />
+					<a href="/" className="text-xl font-bold">
+						devTalk
+					</a>
+				</div>
 			</div>
+			<Themes />
 			{authUser && (
 				<div className="flex-none gap-2">
 					<div className="form-control">
@@ -39,16 +43,26 @@ const Navbar = () => {
 							<li className="flex items-center gap-2 transition-colors pointer-events-none">
 								{/* <span className="hidden sm:inline">Menu</span> */}
 							</li>
-							<Link className="flex items-center gap-2 transition-colors-hover hover:text-primary" to={"/profile"}>
-                <User className="size-5" />
+							<Link
+								className="flex items-center gap-2 transition-colors-hover hover:text-primary"
+								to={"/profile"}
+							>
+								<User className="size-5" />
 								<span className="hidden sm:inline">Perfil</span>
 							</Link>
-							<Link className="flex items-center gap-2 transition-colors-hover hover:text-primary" to={"/settings"}>
-                <Settings className="size-5" />
+							<Link
+								className="flex items-center gap-2 transition-colors-hover hover:text-primary"
+								to={"/settings"}
+							>
+								<Settings className="size-5" />
 								<span className="hidden sm:inline">Configurações</span>
 							</Link>
-							<button className="flex items-center gap-2 transition-colors-hover hover:text-primary" type="button" onClick={logout}>
-                <LogOut className="size-5" />
+							<button
+								className="flex items-center gap-2 transition-colors-hover hover:text-primary"
+								type="button"
+								onClick={logout}
+							>
+								<LogOut className="size-5" />
 								<span className="hidden sm:inline">Sair</span>
 							</button>
 						</ul>
