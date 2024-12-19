@@ -1,22 +1,23 @@
 import { Camera, Mail, User } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
+import { useTranslation } from "react-i18next";
 
 const ProfilePage = () => {
 	const { authUser, isUpdatingProfile } = useAuthStore();
 
-  console.log(authUser?.updatedAt);
+  const { t } = useTranslation();
 
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 	};
 
 	return (
-		<div className="pt-20">
+		<div className="pt-28 sm:pt-16">
 			<div className="max-w-2xl mx-auto p-4 py-6">
 				<div className="bg-base-300 rounded-xl p-6 space-y-8">
 					<div className="text-center">
-						<h1 className="text-2xl font-semibold">Perfil</h1>
-						<p className="mt-2">Suas informações de perfil</p>
+						<h1 className="text-2xl font-semibold">{t('profile')}</h1>
+						<p className="mt-2">{t('infoProfile')}</p>
 					</div>
 
 					{/* avatar */}
@@ -43,7 +44,7 @@ const ProfilePage = () => {
 							</label>
 						</div>
             <p className="text-sm text-zinc-400">
-              {isUpdatingProfile ? "Atualizando..." : "Clique no ícone para atualizar"}
+              {isUpdatingProfile ? t('updating') : t('clickUpdatePic')}
             </p>
 					</div>
 
@@ -52,7 +53,7 @@ const ProfilePage = () => {
             <div className="space-y-1.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <User className="size-4" />
-                Nome completo
+                {t('name')}
               </div>
               <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
                 {authUser?.fullName}
@@ -62,7 +63,7 @@ const ProfilePage = () => {
             <div className="space-y-1.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <Mail className="size-4" />
-                Email
+                {t('email')}
               </div>
               <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
                 {authUser?.email}
@@ -73,19 +74,19 @@ const ProfilePage = () => {
           {/* other infos */}
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium mb-4">
-              Informações da conta
+              {t('accountInfo')}
             </h2>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
-                <span>Membro desde</span>
+                <span>{t('memberSince')}</span>
                 <span>{authUser?.createdAt ? new Date(authUser.createdAt).toLocaleDateString('pt-BR') : 'Data não disponível'}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
-                <span>Última atualização</span>
+                <span>{t('lastUpdate')}</span>
                 <span>{authUser?.updatedAt ? new Date(authUser.createdAt).toLocaleDateString('pt-BR') : 'Data não disponível'}</span>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span>Status da conta</span>
+                <span>{t('accountStatus')}</span>
                 <span className="text-green-500">Online</span>
               </div>
             </div>
