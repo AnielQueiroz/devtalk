@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
-import { useTranslation } from "react-i18next";
 
 interface AuthState {
 	authUser: User | null;
@@ -14,6 +13,7 @@ interface AuthState {
 	signUp: (data: Data, t: (key: string) => string) => Promise<void>;
 	login: (data: Data, t: (key: string) => string) => Promise<void>;
 	logout: (t: (key: string) => string) => Promise<void>;
+	updateProfilePic: (data: string, t: (key: string) => string) => Promise<void>;
 }
 
 interface Data {
@@ -84,7 +84,22 @@ export const useAuthStore = create<AuthState>((set) => ({
 		}
 	},
 
-	// updateProfile: async (data): Promise<void> => {},
+	updateProfilePic: async (data: string, t: (key: string) => string): Promise<void> => {
+		set({ isUpdatingProfile: true });
+		try {
+			const res = await axiosInstance.put("/auth/update-profile", { profilePic: data });
+			set({ authUser: res.data });
+			toast.success(t("successProfileUpdate"));
+		} catch (error: unknown) {
+			console.log("Erro ao atualizar foto de perfil: ", error);
+			if (error instanceof AxiosError) {
+				toast.error(error.response?.data.message);
+				console.log("Erro ao atualizar foto de perfil: ", error);
+			}
+		} finally {
+			set({ isUpdatingProfile: false });
+		}
+	},
 
 	logout: async (t: (key: string) => string) => {
 		try {

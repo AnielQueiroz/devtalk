@@ -1,14 +1,29 @@
 import { Camera, Mail, User } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 const ProfilePage = () => {
-	const { authUser, isUpdatingProfile } = useAuthStore();
+	const { authUser, isUpdatingProfile, updateProfilePic } = useAuthStore();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const { t } = useTranslation();
 
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
+
+    const files = e.target.files;
+    if (!files) return;
+    const file = files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      const base64Image = reader.result as string;
+      setSelectedImage(base64Image);
+      await updateProfilePic(base64Image, t);
+    }
 	};
 
 	return (
@@ -24,7 +39,7 @@ const ProfilePage = () => {
 					<div className="flex flex-col items-center gap-4">
 						<div className="relative">
 							<img
-								src={authUser?.profilePic || "/avatar.png"}
+								src={selectedImage || authUser?.profilePic || "/avatar.png"}
 								alt="Foto de perfil"
 								className="size-32 rounded-full object-cover border"
 							/>
