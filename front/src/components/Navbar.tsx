@@ -1,29 +1,30 @@
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessagesSquare, Settings, User } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import Themes from "./Themes";
 
 const Navbar = () => {
 	const { authUser, logout } = useAuthStore();
 
+	const { t } = useTranslation();
+
 	return (
-		<div className="navbar bg-base-100">
-			<div className="flex-1">
-				<div className="flex gap-2 items-center">
+		<div className="absolute navbar bg-primary/5 flex flex-col sm:flex-row bg-base-100 sm:justify-between">
+			<div className="sm:w-auto flex justify-center sm:justify-between items-start">
+				<div className="flex gap-2 items-center py-2">
 					<MessagesSquare className="size-6" />
-					<a href="/" className="text-xl font-bold">
+					<Link to={"/"} className="text-xl font-bold">
 						devTalk
-					</a>
+					</Link>
 				</div>
 			</div>
-			<Themes />
 			{authUser && (
-				<div className="flex-none gap-2">
-					<div className="form-control">
+				<div className="w-full sm:w-auto flex-none gap-2">
+					<div className="w-full form-control">
 						<input
 							type="text"
-							placeholder="Buscar..."
-							className="input input-bordered w-24 md:w-auto"
+							placeholder={t('search')}
+							className="w-full input input-bordered md:w-auto"
 						/>
 					</div>
 					<div className="dropdown dropdown-end">
@@ -34,8 +35,8 @@ const Navbar = () => {
 						>
 							<div className="w-10 rounded-full">
 								<img
-									alt="Foto de perfil"
-									src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+									alt={t('altProfile')}
+									src={authUser.profilePic || "/avatar.png"}
 								/>
 							</div>
 						</button>
@@ -48,22 +49,22 @@ const Navbar = () => {
 								to={"/profile"}
 							>
 								<User className="size-5" />
-								<span className="hidden sm:inline">Perfil</span>
+								<span className="sm:inline">{t('profile')}</span>
 							</Link>
 							<Link
 								className="flex items-center gap-2 transition-colors-hover hover:text-primary"
 								to={"/settings"}
 							>
 								<Settings className="size-5" />
-								<span className="hidden sm:inline">Configurações</span>
+								<span className="hidden sm:inline">{t('setting')}</span>
 							</Link>
 							<button
 								className="flex items-center gap-2 transition-colors-hover hover:text-primary"
 								type="button"
-								onClick={logout}
+								onClick={() => logout(t)}
 							>
 								<LogOut className="size-5" />
-								<span className="hidden sm:inline">Sair</span>
+								<span className="hidden sm:inline">{t('logout')}</span>
 							</button>
 						</ul>
 					</div>
