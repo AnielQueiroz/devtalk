@@ -5,15 +5,17 @@ import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import Logo from "../components/Logo";
 import Loading from "../components/Loading";
+import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
 	const [formData, setFormData] = useState([{ email: "", password: "" }]);
 	const { login, isLoggingIn } = useAuthStore();
+	const { t } = useTranslation();
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
-		login(formData[0]);
+		login(formData[0], t);
 	};
 
 	return (
@@ -25,9 +27,9 @@ const LoginPage = () => {
 					<div className="text-center mb-8">
 						<div className="flex flex-col items-center gap-2 group">
 							<Logo />
-							<h1 className="text-xl font-bold mt-2">Bem vindo de volta</h1>
+							<h1 className="text-xl font-bold mt-2">{t('welcome')}</h1>
 							<p className="text-base-content/60">
-								Entre com sua conta para continuar
+								{t('welcomeMessage')}
 							</p>
 						</div>
 					</div>
@@ -35,7 +37,7 @@ const LoginPage = () => {
 					<form onSubmit={handleSubmit} className="space-y-6">
 						<div className="form-control">
 							<label className="label" htmlFor="email">
-								<span className="label-text font-medium">Email</span>
+								<span className="label-text font-medium">{t('email')}</span>
 							</label>
 							<div className="relative">
 								<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -45,7 +47,7 @@ const LoginPage = () => {
 									id="email"
 									type="email"
 									name="email"
-									placeholder="Digite seu email"
+									placeholder={t('phEmail')}
 									value={formData[0].email}
 									className="input input-bordered w-full pl-10"
 									onChange={(e) => {
@@ -58,7 +60,7 @@ const LoginPage = () => {
 						</div>
 						<div className="form-control">
 							<label className="label" htmlFor="password">
-								<span className="label-text font-medium">Senha</span>
+								<span className="label-text font-medium">{t('password')}</span>
 							</label>
 							<div className="relative">
 								<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,18 +95,18 @@ const LoginPage = () => {
 
 						<button
 							type="submit"
-							className="btn btn-primary w-full"
+							className="btn btn-secondary w-full"
 							disabled={isLoggingIn}
 						>
-							{isLoggingIn ? <Loading /> : "Entrar"}
+							{isLoggingIn ? <Loading /> : <>{t('login')}</>}
 						</button>
 					</form>
 
 					<div className="text-center">
 						<p className="text-base-content/60">
-							Não possui uma conta?{" "}
+							{t('noAccount')}{" "}
 							<Link to="/signup" className="link">
-								Cadastre-se
+								{t('signupHere')}
 							</Link>
 						</p>
 					</div>
@@ -113,8 +115,8 @@ const LoginPage = () => {
 
 			{/* right side */}
 			<AuthImagePattern
-				title="Junte se à comunidade"
-				subTitle="Faça parte da nossa comunidade e compartilhe conhecimento com outros desenvolvedores."
+				title={t('joinCommunity')}
+				subTitle={t('joinCommunityMessage')}
 			/>
 		</div>
 	);

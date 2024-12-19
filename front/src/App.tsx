@@ -9,7 +9,7 @@ import { useAuthStore } from "./store/useAuthStore"
 import { useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Toaster } from "react-hot-toast"
-import ProtectedRoute from "./utils/ProtectedRoute"
+import Language from "./components/Language"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -18,8 +18,6 @@ function App() {
   useEffect(() => {
     checkAuth()
   }, [checkAuth]);
-
-  console.log({ authUser });
 
   if (isCheckingAuth && !authUser) return (
     <div className="flex items-center justify-center h-screen">
@@ -33,6 +31,10 @@ function App() {
   return (
     <div>
       {!hideNavbar && <Navbar />}
+      {hideNavbar && (
+        <Language />
+      )}
+      
 
       <Routes>
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
@@ -40,11 +42,6 @@ function App() {
         <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={authUser ? <SettingsPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
-        
-        {/* <Route path="/login" element={<ProtectedRoute element={<LoginPage />} />} />
-        <Route path="/signup" element={<ProtectedRoute element={<SignupPage />} />} />
-        <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} />} />
-        <Route path="/profile" element={<ProtectedRoute element={<ProfilePage />} />} /> */}
       </Routes>
 
       <Toaster
