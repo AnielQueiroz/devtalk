@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import AuthImagePattern from "../components/AuthImagePattern";
 import toast from "react-hot-toast";
 import Logo from "../components/Logo";
+import Loading from "../components/Loading";
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -144,7 +145,7 @@ const SignupPage = () => {
               className="btn btn-primary w-full"
               disabled={isSigningUp}
             >
-              {isSigningUp ? <Loader2 className="animate-spin" /> : "Cadastrar"}
+              {isSigningUp ? <Loading /> : "Cadastrar"}
             </button>
           </form>
 

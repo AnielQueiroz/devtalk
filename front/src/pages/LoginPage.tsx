@@ -4,6 +4,7 @@ import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
 import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
 import Logo from "../components/Logo";
+import Loading from "../components/Loading";
 
 const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +27,7 @@ const LoginPage = () => {
 							<Logo />
 							<h1 className="text-xl font-bold mt-2">Bem vindo de volta</h1>
 							<p className="text-base-content/60">
-                Entre com sua conta para continuar
+								Entre com sua conta para continuar
 							</p>
 						</div>
 					</div>
@@ -95,15 +96,15 @@ const LoginPage = () => {
 							className="btn btn-primary w-full"
 							disabled={isLoggingIn}
 						>
-							{isLoggingIn ? <Loader2 className="animate-spin" /> : "Entrar"}
+							{isLoggingIn ? <Loading /> : "Entrar"}
 						</button>
 					</form>
 
 					<div className="text-center">
 						<p className="text-base-content/60">
-              Não possui uma conta?{" "}
+							Não possui uma conta?{" "}
 							<Link to="/signup" className="link">
-                Cadastre-se
+								Cadastre-se
 							</Link>
 						</p>
 					</div>
