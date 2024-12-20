@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
 import AuthImagePattern from "../components/AuthImagePattern";
 import { Link } from "react-router-dom";
-import { Eye, EyeOff, Loader2, Mail, Lock } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Logo from "../components/Logo";
 import Loading from "../components/Loading";
 import { useTranslation } from "react-i18next";
@@ -95,7 +95,7 @@ const LoginPage = () => {
 
 						<button
 							type="submit"
-							className="btn btn-secondary w-full"
+							className="btn btn-primary w-full"
 							disabled={isLoggingIn}
 						>
 							{isLoggingIn ? <Loading /> : <>{t('login')}</>}
