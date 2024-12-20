@@ -9,7 +9,7 @@ const Navbar = () => {
 	const { t } = useTranslation();
 
 	return (
-		<div className="absolute navbar bg-primary/5 flex flex-col sm:flex-row bg-base-100 sm:justify-between">
+		<div className="fixed z-50 navbar flex flex-col sm:flex-row bg-base-300 sm:justify-between shadow-xl">
 			<div className="sm:w-auto flex justify-center sm:justify-between items-start">
 				<div className="flex gap-2 items-center py-2">
 					<MessagesSquare className="size-6" />
