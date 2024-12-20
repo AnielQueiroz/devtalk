@@ -105,7 +105,7 @@ const LoginPage = () => {
 					<div className="text-center">
 						<p className="text-base-content/60">
 							{t('noAccount')}{" "}
-							<Link to="/signup" className="link">
+							<Link to="/signup" className="link link-primary">
 								{t('signupHere')}
 							</Link>
 						</p>
