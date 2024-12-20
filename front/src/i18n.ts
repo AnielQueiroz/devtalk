@@ -44,6 +44,8 @@ const resources = {
 			memberSince: "Membro desde",
 			lastUpdate: "Última atualização",
 			accountStatus: "Status da conta",
+			errorProfilePicTooLarge: "Foto de perfil muito grande, tamanho máximo: 3MB",
+			unexpectedError: "Ocorreu um erro inesperado. Tente novamente mais tarde."
 		},
 	},
 	en: {
@@ -87,6 +89,8 @@ const resources = {
 			memberSince: "Member since",
 			lastUpdate: "Last update",
 			accountStatus: "Account status",
+			errorProfilePicTooLarge: "Profile picture too large, maximum size: 3MB",
+			unexpectedError: "An unexpected error occurred. Try again later."
 		},
 	},
 	ja: {
