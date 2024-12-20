@@ -7,9 +7,9 @@ import SignupPage from "./pages/SignupPage"
 import HomePage from "./pages/HomePage"
 import { useAuthStore } from "./store/useAuthStore"
 import { useEffect } from "react"
-import { Loader2 } from "lucide-react"
 import { Toaster } from "react-hot-toast"
 import Language from "./components/Language"
+import LoadingCheck from "./components/LoadingCheck"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -19,11 +19,7 @@ function App() {
     checkAuth()
   }, [checkAuth]);
 
-  if (isCheckingAuth && !authUser) return (
-    <div className="flex items-center justify-center h-screen">
-      <Loader2 className="size-10 animate-spin" />
-    </div>
-  );
+  if (isCheckingAuth && !authUser) return <LoadingCheck />
 
   const pathsWithoutNavbar = ["/login", "/signup"];
   const hideNavbar = pathsWithoutNavbar.includes(location.pathname);

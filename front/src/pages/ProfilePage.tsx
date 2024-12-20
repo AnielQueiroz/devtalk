@@ -2,12 +2,15 @@ import { Camera, Mail, User } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import LoadingCheck from "../components/LoadingCheck";
 
 const ProfilePage = () => {
-	const { authUser, isUpdatingProfile, updateProfilePic } = useAuthStore();
+	const { authUser, isUpdatingProfile, updateProfilePic, isCheckingAuth } = useAuthStore();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
+  
   const { t } = useTranslation();
+
+  if (isCheckingAuth) return <LoadingCheck />
 
 	const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
