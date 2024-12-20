@@ -56,6 +56,7 @@ const resources = {
 			welcomeTo: "Bem-vindo ao DevTalk",
 			selectAChatToStart: "Selecione um chat para começar a conversar",
 			contacts: "Contatos",
+			communities: "Comunidades",
 		},
 	},
 	en: {
@@ -109,6 +110,7 @@ const resources = {
 			welcomeTo: "Welcome to DevTalk",
 			selectAChatToStart: "Select a chat to start chatting",
 			contacts: "Contacts",
+			communities: "Communities",
 		},
 	},
 	ja: {
