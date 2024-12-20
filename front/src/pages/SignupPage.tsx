@@ -138,7 +138,7 @@ const SignupPage = () => {
 
 						<button
 							type="submit"
-							className="btn btn-secondary w-full"
+							className="btn btn-primary w-full"
 							disabled={isSigningUp}
 						>
 							{isSigningUp ? <Loading /> : <>{t("signup")}</>}
