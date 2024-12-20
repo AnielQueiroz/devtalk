@@ -31,5 +31,6 @@ export const THEMES = [
     "dim",
     "nord",
     "sunset",
-    "devTalk"
+    "devTalk",
+    "f12"
 ];
