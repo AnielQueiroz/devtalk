@@ -100,7 +100,7 @@ export const updateProfile = async (req, res) => {
 
 export const checkAuth = (req, res) => {
     try {
-        res.status(200).json({ user: req.user });
+        res.status(200).json( req.user );
     } catch (error) {
         console.log("Erro ao verificar autenticação: ", error);
         return res.status(500).json({ message: "Erro ao verificar autenticação!" })
