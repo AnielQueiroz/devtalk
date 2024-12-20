@@ -8,8 +8,8 @@ const ThemePage = () => {
 	const { theme, setTheme } = useThemeStore();
 
 	const PREVIEW_MESSAGES = [
-		{ id: 1, content: t("previewMsg1"), isSent: false },
-		{ id: 2, content: t("previewMsg2"), isSent: true },
+		{ id: 1, content: "Olá! Tudo bem?", isSent: false },
+		{ id: 2, content: "Eai, estou bem haha!", isSent: true },
 	];
 
 	return (
@@ -47,7 +47,7 @@ const ThemePage = () => {
 				</div>
 
 				{/* Preview Section */}
-				<h3 className="text-lg font-semibold mb-3">{t('previewChat')}</h3>
+				<h3 className="text-lg font-semibold mb-3">{t("previewChat")}</h3>
 				<div className="rounded-xl border border-base-300 overflow-hidden bg-base-100 shadow-lg mb-3">
 					<div className="p-4 bg-base-200">
 						<div className="max-w-lg mx-auto">
@@ -99,8 +99,8 @@ const ThemePage = () => {
 										<input
 											type="text"
 											className="input input-bordered flex-1 text-sm h-10"
-											placeholder={t('phTypeMessage')}
-											value={t('thisIsAChatPreview')}
+											placeholder={t("phTypeMessage")}
+											value={t("thisIsAChatPreview")}
 											readOnly
 										/>
 										<button
