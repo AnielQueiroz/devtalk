@@ -101,7 +101,7 @@ const ProfilePage = () => {
               </div>
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
                 <span>{t('lastUpdate')}</span>
-                <span>{authUser?.updatedAt ? new Date(authUser.createdAt).toLocaleDateString('pt-BR') : 'Data não disponível'}</span>
+                <span>{authUser?.updatedAt ? new Date(authUser.updatedAt).toLocaleDateString('pt-BR') : 'Data não disponível'}</span>
               </div>
               <div className="flex items-center justify-between py-2">
                 <span>{t('accountStatus')}</span>
