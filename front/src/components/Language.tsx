@@ -1,9 +1,13 @@
 import i18n from "../i18n";
+import { useThemeStore } from "../store/useThemeStore";
 
 const Language = () => {
+  const { setLanguage } = useThemeStore();
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+    setLanguage(lng);
   };
+
   return (
     <div className="dropdown dropdown-bottom dropdown-end absolute top-4 right-4">
       <button tabIndex={0} type="button" className="btn m-1">
