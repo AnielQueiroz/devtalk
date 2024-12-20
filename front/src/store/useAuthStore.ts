@@ -89,14 +89,20 @@ export const useAuthStore = create<AuthState>((set) => ({
 		set({ isUpdatingProfile: true });
 		try {
 			const res = await axiosInstance.put("/auth/update-profile", { profilePic: data });
+			
 			set({ authUser: res.data });
 			toast.success(t("successProfileUpdate"));
 		} catch (error: unknown) {
-			console.log("Erro ao atualizar foto de perfil: ", error);
 			if (error instanceof AxiosError) {
-				toast.error(error.response?.data.message);
+				if (error.request.status === 413 || error.code === "ERR_NETWORK") {
+					toast.error(t("errorProfilePicTooLarge"));
+				} else {
+					toast.error(error.response?.data.message || error.message);
+				}
 				console.log("Erro ao atualizar foto de perfil: ", error);
 			}
+			toast.error(t("unexpectedError"));
+			console.log("Erro ao atualizar foto de perfil: ", error);
 		} finally {
 			set({ isUpdatingProfile: false });
 		}
