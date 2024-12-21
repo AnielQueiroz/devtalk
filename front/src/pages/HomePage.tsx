@@ -1,27 +1,71 @@
+import { t } from "i18next";
+import { Group, MessageCircle } from "lucide-react";
+import { useState } from "react";
+import Contacts from "../components/Contacts";
+import Communities from "../components/Communities";
 import { useChatStore } from "../store/useChatStore";
-import NoChatSelected from "../components/NoChatSelected";
 import ChatContainer from "../components/ChatContainer";
-import Sidebar from "../components/Sidebar";
+import NoChatSelected from "../components/NoChatSelected";
+import CommunityContainer from "../components/CommunityContainer";
 
 const HomePage = () => {
-	const { selectedUser, selectedCommunity } = useChatStore();
+  const [selectedMenu, setSelectedMenu] = useState("contacts");
+  const { selectedUser, selectedCommunity } = useChatStore();
 
-  console.log(selectedUser, selectedCommunity);
+  const handleMenuSelect = (menu: string) => {
+    setSelectedMenu(menu);
+  };
 
-	return (
-		<div className="h-screen bg-base-200">
-			<div className="flex items-center justify-center pt-20 px-4">
-				<div className="bg-base-100 rounded-lg shadow-cl w-full max-w-6xl h-[calc(100vh-8rem)]">
-					<div className="flex h-full rounded-lg overflow-hidden">
-						<Sidebar />
+  return (
+    <div className="h-screen flex pt-28 sm:pt-16 bg-base-200">
+      <aside className="h-full lg:w-96 border-r border-base-300 flex transition-all duration-200">
+        {/* Div vertical para os menus */}
+        <ul className="menu bg-base-300">
+          <li>
+            <button
+              type="button"
+              className={`tooltip tooltip-right ${
+                selectedMenu === "contacts" ? "bg-primary" : ""
+              }`}
+              data-tip={t("contacts")}
+              onClick={() => handleMenuSelect("contacts")}
+            >
+              <MessageCircle className="size-6" />
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              className={`tooltip tooltip-right ${
+                selectedMenu === "communities" ? "bg-primary" : ""
+              }`}
+              data-tip={t("communities")}
+              onClick={() => handleMenuSelect("communities")}
+            >
+              <Group className="size-6" />
+            </button>
+          </li>
+        </ul>
 
-						{!selectedUser ? <NoChatSelected /> : <ChatContainer />}
-            {!selectedCommunity ? <div>Sem comumidade</div> : <div>Comunidade</div>}
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+        {/* conteudo */}
+        <div className="flex-1">
+          {selectedMenu === "contacts" && <Contacts />}
+          {selectedMenu === "communities" && <Communities />}
+        </div>
+      </aside>
+
+      {/* Area principal */}
+      <div className="flex-1">
+        {selectedUser ? (
+          <ChatContainer />
+        ) : selectedCommunity ? (
+          <CommunityContainer />
+        ) : (
+          <NoChatSelected />
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default HomePage;
