@@ -1,20 +1,24 @@
-import { useEffect, useRef } from "react";
-import { useChatStore } from "../store/useChatStore"
+import { useEffect, useRef, useState } from "react";
+import { useChatStore } from "../store/useChatStore";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/util";
+import { X } from "lucide-react";
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser } = useChatStore();
-  const { authUser } = useAuthStore(); 
+  const { messages, getMessages, isMessagesLoading, selectedUser } =
+    useChatStore();
+  const { authUser } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [selectedImg, setSelectedImg] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedUser?._id) getMessages(selectedUser._id);
-    if (messagesEndRef.current) messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [selectedUser?._id, getMessages])
+    if (messagesEndRef.current)
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [selectedUser?._id, getMessages]);
 
   useEffect(() => {
     // Ignorar aviso de linting para incluir messages nas dependências
@@ -23,26 +27,59 @@ const ChatContainer = () => {
     }
   }, [messages]);
 
-  if (isMessagesLoading) return (
-    <div className="h-full flex flex-col">
-      <ChatHeader />
-      <MessageSkeleton />
-      <MessageInput />
-    </div>
-  )
+  if (isMessagesLoading)
+    return (
+      <div className="h-full flex flex-col">
+        <ChatHeader />
+        <MessageSkeleton />
+        <MessageInput />
+      </div>
+    );
+
+  const showImgBigger = (img: string) => {
+    setSelectedImg(img);
+  };
 
   return (
     <div className="h-full flex flex-col">
+      {selectedImg && (
+        <div
+          className="fixed inset-0 bg-neutral bg-opacity-75 flex justify-center items-center z-50"
+          onClick={() => setSelectedImg(null)}
+          onKeyUp={() => setSelectedImg(null)}
+          onKeyDown={() => setSelectedImg(null)}
+          onKeyPress={() => setSelectedImg(null)}
+        >
+          <div className="max-w-3xl max-h-[90%] overflow-auto">
+            <img src={selectedImg} alt="Expanded Attachment" className="w-full h-auto rounded-md" />
+          </div>
+          <button type="button" className="absolute bg-primary rounded-lg p-2 hover:opacity-80 top-4 right-4 text-white text-2xl" onClick={() => setSelectedImg(null)}><X /></button>
+        </div>
+      )}
+      
       <ChatHeader />
 
       <div className="overflow-y-auto flex-1 p-4 space-y-4 bg-base-100">
         {messages.map((msg) => (
-          <div key={msg._id} className={`chat ${msg.senderId === authUser?._id ? "chat-end" : "chat-start"}`}>
+          <div
+            key={msg._id}
+            className={`chat ${
+              msg.senderId === authUser?._id ? "chat-end" : "chat-start"
+            }`}
+          >
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
-                <img 
-                  src={msg.senderId === authUser?._id ? authUser?.profilePic || "/avatar.png" : selectedUser?.profilePic || "/avatar.png"} 
-                  alt={msg.senderId === authUser?._id ? "Your profile picture" : `${selectedUser?.fullName}'s profile picture`} 
+                <img
+                  src={
+                    msg.senderId === authUser?._id
+                      ? authUser?.profilePic || "/avatar.png"
+                      : selectedUser?.profilePic || "/avatar.png"
+                  }
+                  alt={
+                    msg.senderId === authUser?._id
+                      ? "Your profile picture"
+                      : `${selectedUser?.fullName}'s profile picture`
+                  }
                 />
               </div>
             </div>
@@ -51,11 +88,25 @@ const ChatContainer = () => {
                 {msg.createdAt && formatMessageTime(new Date(msg.createdAt))}
               </time>
             </div>
-            <div className={`chat-bubble flex flex-col ${msg.senderId === authUser?._id ? "bg-primary text-primary-content" : "bg-secondary text-secondary-content"}`}>
+            <div
+              className={`chat-bubble flex flex-col ${
+                msg.senderId === authUser?._id
+                  ? "bg-primary text-primary-content"
+                  : "bg-secondary text-secondary-content"
+              }`}
+            >
               {msg.image && (
-                <img src={msg.image as string} alt="Attachment" className="sm:max-w-[200px] rounded-md mb-2" />
+                <img
+                  src={msg.image as string}
+                  alt="Attachment"
+                  className="sm:max-w-[200px] rounded-md mb-2 cursor-pointer hover:opacity-90"
+                  onClick={() => showImgBigger(msg.image as string)}
+                  onKeyUp={() => showImgBigger(msg.image as string)}
+                  onKeyDown={() => showImgBigger(msg.image as string)}
+                  onKeyPress={() => showImgBigger(msg.image as string)}
+                />
               )}
-                {msg.text && <p>{msg.text}</p>}
+              {msg.text && <p>{msg.text}</p>}
             </div>
           </div>
         ))}
@@ -65,7 +116,7 @@ const ChatContainer = () => {
 
       <MessageInput />
     </div>
-  )
-}
+  );
+};
 
-export default ChatContainer
+export default ChatContainer;
