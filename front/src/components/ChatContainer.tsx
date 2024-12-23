@@ -8,7 +8,7 @@ import { formatMessageTime } from "../lib/util";
 import { X } from "lucide-react";
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser } =
+  const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeFromMessages } =
     useChatStore();
   const { authUser } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -16,13 +16,15 @@ const ChatContainer = () => {
 
   useEffect(() => {
     if (selectedUser?._id) getMessages(selectedUser._id);
-    if (messagesEndRef.current)
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-  }, [selectedUser?._id, getMessages]);
+
+    subscribeToMessages()
+
+    return () => unsubscribeFromMessages();
+  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
   useEffect(() => {
     // Ignorar aviso de linting para incluir messages nas dependências
-    if (messagesEndRef.current) {
+    if (messagesEndRef.current && messages.length > 0) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
@@ -41,7 +43,7 @@ const ChatContainer = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col">
       {selectedImg && (
         <div
           className="fixed inset-0 bg-neutral bg-opacity-75 flex justify-center items-center z-50"
