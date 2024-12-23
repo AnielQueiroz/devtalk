@@ -54,7 +54,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full bg-base-200">
       {imgPreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
@@ -91,16 +91,16 @@ const MessageInput = () => {
             ref={fileInputRef}
             onChange={handleImgSelect}
           />
-
+</div>
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle
+            className={`sm:flex btn btn-circle
                    ${imgPreview ? "text-emerald-500" : "text-zinc-400"}`}
             onClick={() => fileInputRef.current?.click()}
           >
             <Image size={20} />
           </button>
-        </div>
+        
         <button
           type="submit"
           className="btn bg-primary hover:bg-primary/65 btn-circle"
