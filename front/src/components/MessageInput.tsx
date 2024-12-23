@@ -103,10 +103,10 @@ const MessageInput = () => {
         </div>
         <button
           type="submit"
-          className="btn btn-sm btn-circle"
+          className="btn bg-primary hover:bg-primary/65 btn-circle"
           disabled={!text.trim() && !imgPreview}
         >
-          <Send size={22} />
+          <Send size={20} />
         </button>
       </form>
     </div>
