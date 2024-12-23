@@ -117,7 +117,7 @@ const ChatContainer = () => {
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full">
             <h2 className="text-2xl font-bold mb-4">{t('startChat')}</h2>
-            <p className="text-lg text-center">
+            <p className="text-zinc-500 text-center">
               {t('sendAMsgToStart')} {selectedUser?.fullName}.
             </p>
           </div>
