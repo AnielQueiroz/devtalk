@@ -9,6 +9,7 @@ interface AuthState {
 	isLoggingIn: boolean;
 	isUpdatingProfile: boolean;
 	isCheckingAuth: boolean;
+	onlineUsers: string[];
 	checkAuth: () => Promise<void>;
 	signUp: (data: Data, t: (key: string) => string) => Promise<void>;
 	login: (data: Data, t: (key: string) => string) => Promise<void>;
@@ -23,7 +24,7 @@ interface Data {
 }
 
 interface User {
-	id: string;
+	_id: string;
 	email: string;
 	fullName: string;
 	profilePic?: string;
@@ -36,13 +37,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 	isSigningUp: false,
 	isLoggingIn: false,
 	isUpdatingProfile: false,
-
 	isCheckingAuth: true,
+	onlineUsers: [],
 
 	checkAuth: async () => {
 		set({ isCheckingAuth: true });
 		try {
 			const res = await axiosInstance.get("/auth/check");
+
+			console.log(res.data)
 
 			set({ authUser: res.data });
 		} catch (error) {
