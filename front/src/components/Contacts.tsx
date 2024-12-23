@@ -31,13 +31,13 @@ const Contacts = () => {
       ) : (
         <div className="w-full h-full flex flex-col">
           {/* titulo */}
-          <div className="flex items-center justify-center gap-2 p-3 border-b border-primary/30 shrink-0">
+          <div className="flex items-center justify-center gap-2 py-[18px] border-b border-primary/30 shrink-0">
             <Users className="size-6" />
             <h1 className="text-lg font-bold">{t("contacts")}</h1>
           </div>
           <div className="mt-3 flex justify-between p-2 items-center gap-2">
-            <label htmlFor="" className="cursor-pointer flex items-center gap-2">
-              <input type="checkbox" checked={showOnlineOnly} onChange={(e) => setShowOnlineOnlineOnly(e.target.checked)} className="checkbox checkbox-sm" />
+            <label htmlFor="showOnlineOnly" className="cursor-pointer flex items-center gap-2">
+              <input id="showOnlineOnly" type="checkbox" checked={showOnlineOnly} onChange={(e) => setShowOnlineOnlineOnly(e.target.checked)} className="checkbox checkbox-sm" />
               <span className="text-sm">{t('showOnlineOnly')}</span> 
             </label>
             <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
