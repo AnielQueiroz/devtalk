@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
@@ -16,10 +16,13 @@ const Contacts = () => {
   } = useChatStore();
 
   const { onlineUsers } = useAuthStore();
+  const  [showOnlineOnly, setShowOnlineOnlineOnly] = useState(false);
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
+
+  const filteredUsers = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id as string)) : users;
 
   return (
     <>
@@ -32,8 +35,15 @@ const Contacts = () => {
             <Users className="size-6" />
             <h1 className="text-lg font-bold">{t("contacts")}</h1>
           </div>
+          <div className="mt-3 flex justify-between p-2 items-center gap-2">
+            <label htmlFor="" className="cursor-pointer flex items-center gap-2">
+              <input type="checkbox" checked={showOnlineOnly} onChange={(e) => setShowOnlineOnlineOnly(e.target.checked)} className="checkbox checkbox-sm" />
+              <span className="text-sm">{t('showOnlineOnly')}</span> 
+            </label>
+            <span className="text-xs text-zinc-500">({onlineUsers.length - 1} online)</span>
+          </div>
           <div className="flex-1 overflow-y-auto py-3">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <button
                 type="button"
                 key={user._id}
@@ -58,7 +68,7 @@ const Contacts = () => {
                   )}
                 </div>
 
-                <div className="hidden lg:block text-left min-w-0">
+                <div className="flex-1 md:block text-left min-w-0">
                   <div className="font-medium truncate">{user.fullName}</div>
                   <div className="text-sm text-zinc-400">
                     {onlineUsers.includes(user._id) ? "Online" : "Offline"}
