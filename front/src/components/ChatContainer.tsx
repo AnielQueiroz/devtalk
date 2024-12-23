@@ -6,6 +6,7 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../lib/util";
 import { X } from "lucide-react";
+import { t } from "i18next";
 
 const ChatContainer = () => {
   const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeFromMessages } =
@@ -43,7 +44,7 @@ const ChatContainer = () => {
   };
 
   return (
-    <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col">
+    <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
       {selectedImg && (
         <div
           className="fixed inset-0 bg-neutral bg-opacity-75 flex justify-center items-center z-50"
@@ -112,6 +113,15 @@ const ChatContainer = () => {
             </div>
           </div>
         ))}
+
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <h2 className="text-2xl font-bold mb-4">{t('startChat')}</h2>
+            <p className="text-lg text-center">
+              {t('sendAMsgToStart')} {selectedUser?.fullName}.
+            </p>
+          </div>
+        )}
 
         <div ref={messagesEndRef} />
       </div>

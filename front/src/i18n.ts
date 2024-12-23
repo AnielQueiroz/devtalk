@@ -59,6 +59,9 @@ const resources = {
 			communities: "Comunidades",
 			selectAImageFile: "Por favor, selecione uma imagem",
 			showOnlineOnly: "Mostrar online apenas",
+			noUsersOnline: "Nenhum usuário online",
+			startChat: "Iniciar chat",
+			sendAMsgToStart: "Envie uma mensagem para iniciar uma conversa com",
 		},
 	},
 	en: {
@@ -115,6 +118,9 @@ const resources = {
 			communities: "Communities",
 			selectAImageFile: "Please, select an image file",
 			showOnlineOnly: "Show online only",
+			noUsersOnline: "No users online",
+			startChat: "Start chat",
+			sendAMsgToStart: "Send a message to start a conversation with",
 		},
 	},
 	ja: {
