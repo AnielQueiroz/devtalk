@@ -11,12 +11,25 @@ const io = new Server(server, {
     }
 });
 
+// Usada para armazenar os onlines
+const userSocketMap = {};
+
 io.on("connection", (conn) => {
     console.log("Usuário conectado: ", conn.id);
+
+    const userId = conn.handshake.query.userId;
+    if (userId) userSocketMap[userId] = conn.id;
+
+    // io.emit é usado para enviar eventos para todos os clientes conectados
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    
+    conn.on("disconnect", () => {
+        console.log("Usuário desconectado: ", conn.id);
+        delete userSocketMap[userId];
+
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
 });
 
-io.on("disconnection", (conn) => {
-    console.log("Usuário desconectado: ", conn.id);
-});
 
 export { io, app, server};
