@@ -18,14 +18,14 @@ const HomePage = () => {
 
   return (
     <div className="h-screen flex pt-28 sm:pt-16 bg-base-200">
-      <aside className="h-full lg:w-96 border-r border-base-300 flex transition-all duration-200">
-        {/* Div vertical para os menus */}
+      {/* ASIDE MENU */}
+      <aside className="border-r border-base-300 flex transition-all duration-200">
         <ul className="menu bg-base-300">
           <li>
             <button
               type="button"
               className={`tooltip tooltip-right ${
-                selectedMenu === "contacts" ? "bg-primary" : ""
+                selectedMenu === "contacts" ? "bg-primary/20" : ""
               }`}
               data-tip={t("contacts")}
               onClick={() => handleMenuSelect("contacts")}
@@ -37,7 +37,7 @@ const HomePage = () => {
             <button
               type="button"
               className={`tooltip tooltip-right ${
-                selectedMenu === "communities" ? "bg-primary" : ""
+                selectedMenu === "communities" ? "bg-primary/20" : ""
               }`}
               data-tip={t("communities")}
               onClick={() => handleMenuSelect("communities")}
@@ -46,13 +46,12 @@ const HomePage = () => {
             </button>
           </li>
         </ul>
-
-        {/* conteudo */}
-        <div className="flex-1">
-          {selectedMenu === "contacts" && <Contacts />}
-          {selectedMenu === "communities" && <Communities />}
-        </div>
       </aside>
+
+      <div className="h-full lg:w-96">
+        {selectedMenu === "contacts" && <Contacts />}
+        {selectedMenu === "communities" && <Communities />}
+      </div>
 
       {/* Area principal */}
       <div className="flex-1">
