@@ -76,6 +76,10 @@ const Contacts = () => {
                 </div>
               </button>
             ))}
+
+            {filteredUsers.length === 0 && (
+              <div className="text-center text-zinc-500 py-4">{t('noUsersOnline')}</div>
+            )}
           </div>
         </div>
       )}
