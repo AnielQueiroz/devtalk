@@ -15,8 +15,18 @@ interface Community {
     name: string;
 }
 
+interface Messages {
+    _id?: string;
+    senderId?: string;
+    receiverId?: string;
+    text?: string;
+    image?: string | ArrayBuffer | null;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 interface ChatStoreState {
-    messages: [];
+    messages: Messages[];
     users: User[];
     selectedUser: User | null;
     selectedCommunity: Community | null;
@@ -26,9 +36,10 @@ interface ChatStoreState {
     getMessages: (userId: string) => Promise<void>;
     setSelectedUser: (selectedUser: User | null) => void;
     setSelectedCommunity: (selectedCommunity: Community | null) => void;
+    sendMessage: (message: Messages) => Promise<void>;
 }
 
-export const useChatStore = create<ChatStoreState>((set) => ({
+export const useChatStore = create<ChatStoreState>((set, get) => ({
     messages: [],
     users: [],
     community: [],
@@ -48,6 +59,7 @@ export const useChatStore = create<ChatStoreState>((set) => ({
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data.message);
             }
+            toast.error("Internal server error");
         } finally {
             set({ isUsersLoading: false });
         }
@@ -57,7 +69,7 @@ export const useChatStore = create<ChatStoreState>((set) => ({
         set({ isMessagesLoading: true });
         try {
             const res = await axiosInstance.get(`/messages/${userId}`);
-            set({ messages: res.data });
+            set({ messages: res.data.messages });
         } catch (error: unknown) {
             console.error('Erro ao buscar mensagens', error);
             if (error instanceof AxiosError) {
@@ -65,6 +77,20 @@ export const useChatStore = create<ChatStoreState>((set) => ({
             }
         } finally {
             set({ isMessagesLoading: false });
+        }
+    },
+
+    sendMessage: async (msgData: Messages) => {
+        const { selectedUser, messages } = get();
+        try {
+            const res = await axiosInstance.post(`/messages/send/${selectedUser?._id}`, msgData);
+            set({ messages: [...messages || [], res.data.newMessage] })
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            toast.error("Internal server error");
         }
     },
 
