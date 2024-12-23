@@ -57,7 +57,8 @@ const resources = {
 			selectAChatToStart: "Selecione um chat para começar a conversar",
 			contacts: "Contatos",
 			communities: "Comunidades",
-			selectAImageFile: "Por favor, selecione uma imagem"
+			selectAImageFile: "Por favor, selecione uma imagem",
+			showOnlineOnly: "Mostrar online apenas",
 		},
 	},
 	en: {
@@ -112,7 +113,8 @@ const resources = {
 			selectAChatToStart: "Select a chat to start chatting",
 			contacts: "Contacts",
 			communities: "Communities",
-			selectAImageFile: "Please, select an image file"
+			selectAImageFile: "Please, select an image file",
+			showOnlineOnly: "Show online only",
 		},
 	},
 	ja: {
