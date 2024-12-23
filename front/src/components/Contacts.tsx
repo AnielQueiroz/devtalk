@@ -3,16 +3,17 @@ import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users } from "lucide-react";
 import { t } from "i18next";
+import { useAuthStore } from "../store/useAuthStore";
 
 const Contacts = () => {
   const { getUsers, users, selectedUser, setSelectedUser, setSelectedCommunity, isUsersLoading } =
     useChatStore();
 
+  const { onlineUsers } = useAuthStore();
+
   useEffect(() => {
     getUsers();
   }, [getUsers]);
-
-  const onlineUsers: string | string[] = [];
 
   return (
     <>
@@ -21,7 +22,7 @@ const Contacts = () => {
       ) : (
         <div className="overflow-y-auto w-full py-3">
             {/* titulo */}
-            <div className="flex items-center justify-center gap-2 p-3 border-b border-base-300">
+            <div className="flex items-center justify-center gap-2 p-3 border-b border-primary/30">
                 <Users className="size-6" />
                 <h1 className="text-lg font-bold">{t('contacts')}</h1>
             </div>
