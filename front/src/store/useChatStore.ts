@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { AxiosError } from 'axios';
+import { useAuthStore } from './useAuthStore';
 
 interface User {
     _id: string;
@@ -37,6 +38,8 @@ interface ChatStoreState {
     setSelectedUser: (selectedUser: User | null) => void;
     setSelectedCommunity: (selectedCommunity: Community | null) => void;
     sendMessage: (message: Messages) => Promise<void>;
+    subscribeToMessages: () => void;
+    unsubscribeFromMessages: () => void;
 }
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
@@ -92,6 +95,23 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             }
             toast.error("Internal server error");
         }
+    },
+
+    subscribeToMessages: () => {
+        const { selectedUser } = get();
+        if (!selectedUser) return;
+
+        const socket = useAuthStore.getState().socket;
+
+        // todo: optimize this one later
+        socket?.on("newMessage", (newMessage) => {
+            set({ messages: [...get().messages, newMessage] });
+        });
+    },
+
+    unsubscribeFromMessages: () => {
+        const socket = useAuthStore.getState().socket;
+        socket?.off("newMessage");
     },
 
     // todo: optimize this function
