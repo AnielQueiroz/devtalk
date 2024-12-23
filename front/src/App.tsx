@@ -13,9 +13,11 @@ import { useThemeStore } from "./store/useThemeStore"
 import ThemePage from "./pages/ThemePage"
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
   const { theme } = useThemeStore();
   const location = useLocation();
+
+  console.log('onlines:', onlineUsers);
 
   useEffect(() => {
     checkAuth()
