@@ -9,7 +9,7 @@ import { useAuthStore } from "./store/useAuthStore"
 import { useEffect } from "react"
 import { Loader2 } from "lucide-react"
 import { Toaster } from "react-hot-toast"
-import ProtectedRoute from "./utils/ProtectedRoute"
+// import ProtectedRoute from "./utils/ProtectedRoute"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
