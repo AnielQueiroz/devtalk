@@ -25,7 +25,7 @@ const HomePage = () => {
             <button
               type="button"
               className={`tooltip tooltip-right ${
-                selectedMenu === "contacts" ? "bg-primary/20" : ""
+                selectedMenu === "contacts" ? "bg-primary/75" : ""
               }`}
               data-tip={t("contacts")}
               onClick={() => handleMenuSelect("contacts")}
@@ -37,7 +37,7 @@ const HomePage = () => {
             <button
               type="button"
               className={`tooltip tooltip-right ${
-                selectedMenu === "communities" ? "bg-primary/20" : ""
+                selectedMenu === "communities" ? "bg-primary/75" : ""
               }`}
               data-tip={t("communities")}
               onClick={() => handleMenuSelect("communities")}
@@ -48,7 +48,7 @@ const HomePage = () => {
         </ul>
       </aside>
 
-      <div className="h-full lg:w-96">
+      <div className="h-full w-full md:w-72 lg:w-96">
         {selectedMenu === "contacts" && <Contacts />}
         {selectedMenu === "communities" && <Communities />}
       </div>
