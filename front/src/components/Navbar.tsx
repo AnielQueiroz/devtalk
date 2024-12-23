@@ -79,7 +79,7 @@ const Navbar = () => {
 								to={"/theme"}
 							>
 								<Settings className="size-5" />
-								<span className="hidden sm:inline">{t("theme")}</span>
+								<span className="sm:inline">{t("theme")}</span>
 							</Link>
 							<div className="dropdown dropdown-bottom dropdown-end">
 								<button
@@ -117,7 +117,7 @@ const Navbar = () => {
 								onClick={() => logout(t)}
 							>
 								<LogOut className="size-5" />
-								<span className="hidden sm:inline">{t("logout")}</span>
+								<span className="sm:inline">{t("logout")}</span>
 							</button>
 						</ul>
 					</div>
