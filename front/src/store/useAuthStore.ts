@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { io, type Socket } from "socket.io-client";
+
+const BASE_URL = "http://localhost:5001";
 
 interface AuthState {
 	authUser: User | null;
@@ -10,11 +13,14 @@ interface AuthState {
 	isUpdatingProfile: boolean;
 	isCheckingAuth: boolean;
 	onlineUsers: string[];
+	socket: Socket | null;
 	checkAuth: () => Promise<void>;
 	signUp: (data: Data, t: (key: string) => string) => Promise<void>;
 	login: (data: Data, t: (key: string) => string) => Promise<void>;
 	logout: (t: (key: string) => string) => Promise<void>;
 	updateProfilePic: (data: string, t: (key: string) => string) => Promise<void>;
+	connectSocket: () => void;
+	disconnectSocket: () => void; 
 }
 
 interface Data {
@@ -32,22 +38,23 @@ interface User {
 	updatedAt: string;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
 	authUser: null,
 	isSigningUp: false,
 	isLoggingIn: false,
 	isUpdatingProfile: false,
 	isCheckingAuth: true,
 	onlineUsers: [],
+	socket: null,
 
 	checkAuth: async () => {
 		set({ isCheckingAuth: true });
 		try {
 			const res = await axiosInstance.get("/auth/check");
 
-			console.log(res.data)
-
 			set({ authUser: res.data });
+			
+			get().connectSocket()
 		} catch (error) {
 			set({ authUser: null });
 			console.log("Erro ao verificar autenticação: ", error);
@@ -78,6 +85,8 @@ export const useAuthStore = create<AuthState>((set) => ({
 			const res = await axiosInstance.post("/auth/login", data);
 			set({ authUser: res.data });
 			toast.success(t('successLogin'));
+
+			get().connectSocket();
 		} catch (error: unknown) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data.message);
@@ -116,11 +125,35 @@ export const useAuthStore = create<AuthState>((set) => ({
 			await axiosInstance.post("/auth/logout");
 			set({ authUser: null });
 			toast.success(t("successLogout"));
+
+			get().disconnectSocket();
 		} catch (error: unknown) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data.message);
 			}
 			console.log("Erro ao fazer logout: ", error);
 		}
+	},
+
+	connectSocket: () => {
+		const { authUser } = get();
+		if (!authUser || get().socket?.connected) return;
+
+		const socket = io(BASE_URL, {
+			query: {
+				userId: authUser._id,
+			}
+		});
+		socket.connect();
+
+		set({ socket: socket });
+
+		socket.on("getOnlineUsers", (usersIds) => {
+			set({ onlineUsers: usersIds })
+		});
+	},
+
+	disconnectSocket: () => {
+		if(get().socket?.connected) get().socket?.disconnect();
 	},
 }));
