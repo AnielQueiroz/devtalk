@@ -23,7 +23,7 @@ const Communities = () => {
       {/* Título fixo */}
       <div className="flex items-center justify-center gap-2 p-3 border-b border-primary/30 shrink-0">
         <Group className="size-6" />
-        <h1 className="text-lg font-bold">{t("communities")}</h1>
+        <h1 className="text-lg hidden lg:flex font-bold">{t("communities")}</h1>
       </div>
 
       {/* Conteúdo com scroll */}
