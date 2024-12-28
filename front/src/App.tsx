@@ -11,6 +11,7 @@ import Language from "./components/Language"
 import LoadingCheck from "./components/LoadingCheck"
 import { useThemeStore } from "./store/useThemeStore"
 import ThemePage from "./pages/ThemePage"
+import Terms from "./pages/TermsPage"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
@@ -42,6 +43,9 @@ function App() {
         <Route path="/" element={authUser ? <HomePage /> : <Navigate to="/login" />} />
         <Route path="/theme" element={authUser ? <ThemePage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+
+        {/* publics */}
+        <Route path="/terms" element={<Terms />}></Route>
       </Routes>
 
       <Toaster
