@@ -89,7 +89,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			get().connectSocket();
 		} catch (error: unknown) {
 			if (error instanceof AxiosError) {
-				toast.error(error.response?.data.message);
+				toast.error(error.response?.data.message || t('opsSomethingWentWrong'));
 			}
 			console.log("Erro ao fazer login: ", error);
 		} finally {

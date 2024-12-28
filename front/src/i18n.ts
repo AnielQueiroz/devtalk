@@ -62,6 +62,7 @@ const resources = {
 			noUsersOnline: "Nenhum usuário online",
 			startChat: "Iniciar chat",
 			sendAMsgToStart: "Envie uma mensagem para iniciar uma conversa com",
+			opsSomethingWentWrong: "Ops, Algo deu errado. Tente novamente mais tarde!",
 		},
 	},
 	en: {
@@ -121,6 +122,7 @@ const resources = {
 			noUsersOnline: "No users online",
 			startChat: "Start chat",
 			sendAMsgToStart: "Send a message to start a conversation with",
+			opsSomethingWentWrong: "Oops, something went wrong. Try again later!",
 		},
 	},
 	ja: {
