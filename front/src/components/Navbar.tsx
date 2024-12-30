@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import i18n from "../i18n";
 import { useThemeStore } from "../store/useThemeStore";
+import InputSearch from "./InputSearch";
 
 const Navbar = () => {
 	const { authUser, logout } = useAuthStore();
@@ -43,13 +44,7 @@ const Navbar = () => {
 			</div>
 			{authUser && (
 				<div className="w-full sm:w-auto flex-none gap-2">
-					<div className="w-full form-control">
-						<input
-							type="text"
-							placeholder={t("search")}
-							className="w-full input input-bordered md:w-auto"
-						/>
-					</div>
+					<InputSearch />
 					<div className="dropdown dropdown-end">
 						<button
 							tabIndex={0}
