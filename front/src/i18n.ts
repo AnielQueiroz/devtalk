@@ -66,7 +66,8 @@ const resources = {
 			IAgreeToThe: "Eu concordo com os",
 			termsAndPolices: "Termos e Políticas",
 			acceptTerms: "Por favor, aceite os termos e políticas!",
-			chats: "Conversas"
+			chats: "Conversas",
+			searchResults: "Resultados da busca",
 		},
 	},
 	en: {
@@ -130,7 +131,8 @@ const resources = {
 			IAgreeToThe: "I agree to the",
 			termsAndPolices: "Terms and Polices",
 			acceptTerms: "Please, accept the terms and polices!",
-			chats: "Chats"
+			chats: "Chats",
+			searchResults: "Search results",
 		},
 	},
 	ja: {
