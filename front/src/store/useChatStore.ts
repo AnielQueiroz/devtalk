@@ -29,10 +29,15 @@ interface Messages {
 interface ChatStoreState {
     messages: Messages[];
     users: User[];
+    searchResults: {
+        users: User[];
+        communities: Community[];
+    } | null;
     selectedUser: User | null;
     selectedCommunity: Community | null;
     isUsersLoading: boolean;
     isMessagesLoading: boolean;
+    isSearchLoading: boolean;
     getUsers: () => Promise<void>;
     getInteractedUsers: () => Promise<void>;
     getMessages: (userId: string) => Promise<void>;
@@ -41,15 +46,18 @@ interface ChatStoreState {
     sendMessage: (message: Messages) => Promise<void>;
     subscribeToMessages: () => void;
     unsubscribeFromMessages: () => void;
+    getSearchResults: (query: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
     messages: [],
     users: [],
+    searchResults: null,
     community: [],
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
+    isSearchLoading: false,
     selectedCommunity: null,
 
     // probably discontinued
@@ -97,6 +105,21 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             }
         } finally {
             set({ isMessagesLoading: false });
+        }
+    },
+
+    getSearchResults: async (query: string) => {
+        set({ isSearchLoading: true });
+        try {
+            const res = await axiosInstance.get(`/search/${query}`);
+            set({ searchResults: res.data });
+        } catch (error: unknown) {
+            console.error('Erro ao buscar resultados', error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+        } finally {
+            set({ isSearchLoading: false });
         }
     },
 

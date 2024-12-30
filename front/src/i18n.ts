@@ -68,6 +68,7 @@ const resources = {
 			acceptTerms: "Por favor, aceite os termos e políticas!",
 			chats: "Conversas",
 			searchResults: "Resultados da busca",
+			user: "Usuário",
 		},
 	},
 	en: {
@@ -133,6 +134,7 @@ const resources = {
 			acceptTerms: "Please, accept the terms and polices!",
 			chats: "Chats",
 			searchResults: "Search results",
+			user: "User",
 		},
 	},
 	ja: {

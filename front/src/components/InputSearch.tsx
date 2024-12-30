@@ -1,13 +1,17 @@
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useChatStore } from "../store/useChatStore";
+import Loading from "./Loading";
 
 const InputSearch = () => {
 	const [search, setSearch] = useState("");
+	const { searchResults, isSearchLoading, getSearchResults, setSelectedUser, setSelectedCommunity } = useChatStore();
 
-	if (search.length > 3) {
-		console.log(search);
-		// logica para fazer a busca
-	}
+	useEffect(() => {
+		if (search.length > 2) getSearchResults(search);
+	}, [search, getSearchResults]);
+
+	console.log(searchResults);
 
 	return (
 		<div className="relative w-72">
@@ -34,39 +38,52 @@ const InputSearch = () => {
 				</svg>
 			</label>
 
-            {search.length > 3 && (
-                <div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
-                    <p className="text-sm text-base-content text-center">{t("searchResults")}: {search}</p>
-                    {/* divider */}
-                    <div className="divider divider-secondary" />
+			{search.length > 2 &&
+				((isSearchLoading && (
+					<div className="absolute flex justify-center top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
+						<Loading />
+					</div>
+				)) ||
+					(searchResults?.users.length === 0 &&
+						searchResults?.communities.length === 0 && (
+							<div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
+								<p className="text-sm text-base-content text-center">
+									{t("noResults")}
+								</p>
+							</div>
+						)) ||
+					((searchResults?.users?.length ?? 0) > 0 && (
+						<div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
+							<p className="text-sm text-base-content text-center">
+								{t("searchResults")}: {search}
+							</p>
+							{/* divider */}
+							<div className="divider divider-neutral" />
 
-                    {/* exemplo de resultado de busca, cards com foto, nome e badge para indicar se é usuário ou comunidade */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors">
-                            <img
-                                src="https://i.pravatar.cc/150?img=3"
-                                alt="avatar"
-                                className="w-12 h-12 rounded-full"
-                            />
-                            <div>
-                                <p className="font-bold text-base-content">Só Java</p>
-                                <p className="badge badge-primary">Comunidade</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors">
-                            <img
-                                src="https://i.pravatar.cc/150?img=3"
-                                alt="avatar"
-                                className="w-12 h-12 rounded-full"
-                            />
-                            <div>
-                                <p className="font-bold text-base-content">Romeu</p>
-                                <p className="badge badge-accent">Usuário</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+							<div className="space-y-2">
+								{searchResults?.users?.map((user) => (
+									<button className="w-full" type="button" key={user._id} onClick={() => {setSelectedUser(user); setSearch(""); setSelectedCommunity(null)}}>
+										<div
+											key={user._id}
+											className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors"
+										>
+											<img
+												src={user.profilePic || "/avatar.png"}
+												alt={user.fullName}
+												className="rounded-full size-12 object-cover"
+											/>
+											<div>
+												<p className="font-bold text-base-content">
+													{user.fullName}
+												</p>
+												<p className="badge badge-accent">{t("user")}</p>
+											</div>
+										</div>
+									</button>
+								))}
+							</div>
+						</div>
+					)))}
 		</div>
 	);
 };
