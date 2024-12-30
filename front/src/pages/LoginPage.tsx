@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import Logo from "../components/Logo";
 import Loading from "../components/Loading";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,10 @@ const LoginPage = () => {
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+
+		if (!formData[0].email) return toast.error(t('fillEmail'));
+		if (!formData[0].password) return toast.error(t('fillPassword'));
+		
 		login(formData[0], t);
 	};
 

@@ -13,6 +13,7 @@ const SignupPage = () => {
 	const [formData, setFormData] = useState([
 		{ email: "", fullName: "", password: "" },
 	]);
+	const [termsAccepted, setTermsAccepted] = useState(false);
 
 	const { t } = useTranslation();
 
@@ -26,6 +27,7 @@ const SignupPage = () => {
 		if (!formData[0].password) return toast.error(t('fillPassword'));
 		if (formData[0].password.length < 6)
 			return toast.error(t('lengthPassword'));
+		if (!termsAccepted) return toast.error(t('acceptTerms'));
 
 		return true;
 	};
@@ -122,6 +124,7 @@ const SignupPage = () => {
 										setFormData(updatedFormData);
 									}}
 								/>
+
 								<button
 									type="button"
 									className="absolute inset-y-0 right-0 pr-3 flex items-center"
@@ -134,6 +137,15 @@ const SignupPage = () => {
 									)}
 								</button>
 							</div>
+						</div>
+
+						<div className="form-control">
+							<label htmlFor="terms" className="flex items-center gap-2 cursor-pointer p-2 rounded-md">
+								<input id="terms" onClick={() => setTermsAccepted(!termsAccepted)} type="checkbox" className="checkbox checkbox-sm checkbox-accent" />
+								<span className="label-text text-sm text-gray-700">
+									{t('IAgreeToThe')} <a href="/terms" className="text-blue-600 hover:underline">{t('termsAndPolices')}</a>
+								</span>
+							</label>
 						</div>
 
 						<button

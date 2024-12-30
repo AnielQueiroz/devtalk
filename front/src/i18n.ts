@@ -62,6 +62,10 @@ const resources = {
 			noUsersOnline: "Nenhum usuário online",
 			startChat: "Iniciar chat",
 			sendAMsgToStart: "Envie uma mensagem para iniciar uma conversa com",
+			opsSomethingWentWrong: "Ops, Algo deu errado. Tente novamente mais tarde!",
+			IAgreeToThe: "Eu concordo com os",
+			termsAndPolices: "Termos e Políticas",
+			acceptTerms: "Por favor, aceite os termos e políticas!"
 		},
 	},
 	en: {
@@ -121,6 +125,10 @@ const resources = {
 			noUsersOnline: "No users online",
 			startChat: "Start chat",
 			sendAMsgToStart: "Send a message to start a conversation with",
+			opsSomethingWentWrong: "Oops, something went wrong. Try again later!",
+			IAgreeToThe: "I agree to the",
+			termsAndPolices: "Terms and Polices",
+			acceptTerms: "Please, accept the terms and polices!"
 		},
 	},
 	ja: {
