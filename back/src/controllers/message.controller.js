@@ -67,3 +67,52 @@ export const sendMessage = async (req, res) => {
         return res.status(500).json({ message: "Erro ao enviar mensagem" });
     }
 };
+
+export const getInteractedContacts = async (req, res) => {
+    try {
+        const userId = req.user._id;
+
+        const interactedContacts = await Message.aggregate([
+            {
+                $match: {
+                    $or: [
+                        { senderId: userId },
+                        { receiverId: userId }
+                    ]
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        $cond: [
+                            { $eq: ["$senderId", userId] }, "$receiverId", "$senderId"
+                        ]
+                    }
+                },
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            },
+            {
+                $unwind: "$user"
+            },
+            {
+                $project: {
+                    _id: 1,
+                    fullName: "$user.fullName",
+                    profilePic: "$user.profilePic",
+                }
+            }
+        ]);
+
+        return res.status(200).json( interactedContacts );
+    } catch (error) {
+        console.log("Erro ao obter contatos interagidos: ", error);
+        return res.status(500).json({ message: "Erro ao obter contatos interagidos" });
+    }
+};
