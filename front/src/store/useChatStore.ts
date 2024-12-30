@@ -52,6 +52,7 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     isMessagesLoading: false,
     selectedCommunity: null,
 
+    // probably discontinued
     getUsers: async () => {
         set({ isUsersLoading: true });
         try {
