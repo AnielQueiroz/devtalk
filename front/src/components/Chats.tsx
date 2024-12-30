@@ -5,9 +5,9 @@ import { Users } from "lucide-react";
 import { t } from "i18next";
 import { useAuthStore } from "../store/useAuthStore";
 
-const Contacts = () => {
+const Chats = () => {
   const {
-    getUsers,
+    getInteractedUsers,
     users,
     selectedUser,
     setSelectedUser,
@@ -19,8 +19,8 @@ const Contacts = () => {
   const  [showOnlineOnly, setShowOnlineOnlineOnly] = useState(false);
 
   useEffect(() => {
-    getUsers();
-  }, [getUsers]);
+    getInteractedUsers();
+  }, [getInteractedUsers]);
 
   const filteredUsers = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id as string)) : users;
 
@@ -33,7 +33,7 @@ const Contacts = () => {
           {/* titulo */}
           <div className="flex items-center justify-center gap-2 py-[18px] border-b border-primary/30 shrink-0">
             <Users className="size-6" />
-            <h1 className="text-lg font-bold">{t("contacts")}</h1>
+            <h1 className="text-lg font-bold">{t("chats")}</h1>
           </div>
           <div className="mt-3 flex justify-between p-2 items-center gap-2">
             <label htmlFor="showOnlineOnly" className="cursor-pointer flex items-center gap-2">
@@ -87,4 +87,4 @@ const Contacts = () => {
   );
 };
 
-export default Contacts;
+export default Chats;

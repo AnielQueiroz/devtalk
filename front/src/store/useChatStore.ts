@@ -34,6 +34,7 @@ interface ChatStoreState {
     isUsersLoading: boolean;
     isMessagesLoading: boolean;
     getUsers: () => Promise<void>;
+    getInteractedUsers: () => Promise<void>;
     getMessages: (userId: string) => Promise<void>;
     setSelectedUser: (selectedUser: User | null) => void;
     setSelectedCommunity: (selectedCommunity: Community | null) => void;
@@ -55,7 +56,22 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         set({ isUsersLoading: true });
         try {
             const res = await axiosInstance.get('/messages/users');
-            console.log(res.data);
+            set({ users: res.data });
+        } catch (error: unknown) {
+            console.error('Erro ao buscar usuários', error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            toast.error("Internal server error");
+        } finally {
+            set({ isUsersLoading: false });
+        }
+    },
+
+    getInteractedUsers: async () => {
+        set({ isUsersLoading: true });
+        try {
+            const res = await axiosInstance.get('/messages/interacted-contacts');
             set({ users: res.data });
         } catch (error: unknown) {
             console.error('Erro ao buscar usuários', error);

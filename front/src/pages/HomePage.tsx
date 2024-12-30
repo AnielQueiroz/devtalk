@@ -1,7 +1,7 @@
 import { t } from "i18next";
 import { Group, MessageCircle } from "lucide-react";
 import { useState } from "react";
-import Contacts from "../components/Contacts";
+import Chats from "../components/Chats";
 import Communities from "../components/Communities";
 import { useChatStore } from "../store/useChatStore";
 import ChatContainer from "../components/ChatContainer";
@@ -27,7 +27,7 @@ const HomePage = () => {
               className={`tooltip tooltip-right ${
                 selectedMenu === "contacts" ? "bg-primary/75" : ""
               }`}
-              data-tip={t("contacts")}
+              data-tip={t("chats")}
               onClick={() => handleMenuSelect("contacts")}
             >
               <MessageCircle className="size-6" />
@@ -49,7 +49,7 @@ const HomePage = () => {
       </aside>
 
       <div className="h-full w-full md:w-72 lg:w-96">
-        {selectedMenu === "contacts" && <Contacts />}
+        {selectedMenu === "contacts" && <Chats />}
         {selectedMenu === "communities" && <Communities />}
       </div>
 

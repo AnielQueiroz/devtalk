@@ -65,7 +65,8 @@ const resources = {
 			opsSomethingWentWrong: "Ops, Algo deu errado. Tente novamente mais tarde!",
 			IAgreeToThe: "Eu concordo com os",
 			termsAndPolices: "Termos e Políticas",
-			acceptTerms: "Por favor, aceite os termos e políticas!"
+			acceptTerms: "Por favor, aceite os termos e políticas!",
+			chats: "Conversas"
 		},
 	},
 	en: {
@@ -128,7 +129,8 @@ const resources = {
 			opsSomethingWentWrong: "Oops, something went wrong. Try again later!",
 			IAgreeToThe: "I agree to the",
 			termsAndPolices: "Terms and Polices",
-			acceptTerms: "Please, accept the terms and polices!"
+			acceptTerms: "Please, accept the terms and polices!",
+			chats: "Chats"
 		},
 	},
 	ja: {
