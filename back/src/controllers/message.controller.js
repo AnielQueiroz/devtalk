@@ -6,9 +6,9 @@ import User from "../models/user.model.js";
 export const getUsersForSideBar = async (req, res) => {
     try {
         const loggedInUserId = req.user._id;
-        const filteredUsers = await User.find({_id: { $ne: loggedInUserId }}).select("-password");
+        const filteredUsers = await User.find({ _id: { $ne: loggedInUserId } }).select("-password");
 
-        return res.status(200).json( filteredUsers );
+        return res.status(200).json(filteredUsers);
     } catch (error) {
         console.log("Erro ao obter usuarios para barra lateral: ", error);
         return res.status(500).json({ message: "Erro ao obter usuarios para barra lateral" });
@@ -20,7 +20,7 @@ export const getMessages = async (req, res) => {
         const { id: userToChatId } = req.params;
         const myId = req.user._id;
 
-        const messages = await Message.find({ 
+        const messages = await Message.find({
             $or: [
                 { senderId: myId, receiverId: userToChatId },
                 { senderId: userToChatId, receiverId: myId }
@@ -57,6 +57,7 @@ export const sendMessage = async (req, res) => {
         await newMessage.save();
 
         const receiverSocketId = getReceiverSocketId(receiverId);
+        
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
@@ -67,6 +68,53 @@ export const sendMessage = async (req, res) => {
         return res.status(500).json({ message: "Erro ao enviar mensagem" });
     }
 };
+
+export const markMessageAsRead = async (req, res) => {
+    // voce
+    const myId = req.user._id;
+
+    // usuario que enviou a mensagem
+    const { senderId } = req.params;
+
+    try {
+       await Message.updateMany(
+        { senderId, receiverId: myId, isRead: false },
+        { $set: { isRead: true } }
+       );
+
+        return res.status(200).json({ message: "Mensagems marcadas como lida" });
+    } catch (error) {
+        console.log("Erro ao marcar mensagens como lidas: ", error);
+        return res.status(500).json({ message: "Erro ao marcar mensagens como lidas" });
+    }
+};
+
+export const getUnreadMessagesCounts = async (req, res) => {
+    try {
+        const myId = req.user._id;
+
+        const unreadMessagesCounts = await Message.aggregate([
+            {
+                $match: {
+                    receiverId: myId,
+                    isRead: false,
+                }
+            },
+            {
+                $group: {
+                    _id: "$senderId",
+                    count: { $sum: 1 }
+                }
+            },
+
+        ]);
+
+        return res.status(200).json({ unreadMessagesCounts });
+    } catch (error) {
+        console.log("Erro ao obter contagem de mensagens nao lidas: ", error);
+        return res.status(500).json({ message: "Erro ao obter contagem de mensagens nao lidas" });
+    }
+}
 
 export const getInteractedContacts = async (req, res) => {
     try {
@@ -110,7 +158,7 @@ export const getInteractedContacts = async (req, res) => {
             }
         ]);
 
-        return res.status(200).json( interactedContacts );
+        return res.status(200).json(interactedContacts);
     } catch (error) {
         console.log("Erro ao obter contatos interagidos: ", error);
         return res.status(500).json({ message: "Erro ao obter contatos interagidos" });
