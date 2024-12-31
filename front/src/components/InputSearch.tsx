@@ -3,15 +3,32 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import Loading from "./Loading";
 
+interface User {
+    _id: string;
+    fullName: string;
+    email: string;
+    profilePic?: string;
+}
+
 const InputSearch = () => {
 	const [search, setSearch] = useState("");
-	const { searchResults, isSearchLoading, getSearchResults, setSelectedUser, setSelectedCommunity } = useChatStore();
+	const {
+		searchResults,
+		isSearchLoading,
+		getSearchResults,
+		setSelectedUser,
+		setSelectedCommunity,
+	} = useChatStore();
 
 	useEffect(() => {
 		if (search.length > 2) getSearchResults(search);
 	}, [search, getSearchResults]);
 
-	console.log(searchResults);
+	const handleSelectUser = (user: User) => {
+		setSelectedUser(user);
+		setSelectedCommunity(null);
+		setSearch("");
+	};
 
 	return (
 		<div className="relative w-72">
@@ -62,7 +79,12 @@ const InputSearch = () => {
 
 							<div className="space-y-2">
 								{searchResults?.users?.map((user) => (
-									<button className="w-full" type="button" key={user._id} onClick={() => {setSelectedUser(user); setSearch(""); setSelectedCommunity(null)}}>
+									<button
+										className="w-full"
+										type="button"
+										key={user._id}
+										onClick={() => handleSelectUser(user)}
+									>
 										<div
 											key={user._id}
 											className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors"

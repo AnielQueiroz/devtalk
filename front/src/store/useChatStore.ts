@@ -127,7 +127,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         const { selectedUser, messages } = get();
         try {
             const res = await axiosInstance.post(`/messages/send/${selectedUser?._id}`, msgData);
-            set({ messages: [...messages || [], res.data.newMessage] })
+            set({ messages: [...messages || [], res.data.newMessage] });
+
+            // checar se o selectedUser já está na lista de usuários
+            if (!get().users.find((user) => user._id === selectedUser?._id)) {
+                if (selectedUser) {
+                    set({ users: [...get().users, selectedUser] });
+                }
+            }
         } catch (error) {
             console.log(error);
             if (error instanceof AxiosError) {
