@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { AxiosError } from 'axios';
 import { useAuthStore } from './useAuthStore';
+import { showNotification } from '../lib/util';
 
 interface User {
     _id: string;
@@ -197,6 +198,10 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     
         socket.on("newMessage", (newMessage) => {
             const { messages, selectedUser, unreadCounts } = get();
+
+            // notificar
+            const audio = new Audio("/sounds/notification.mp3");
+            audio.play().catch(() => console.error('Erro ao tocar o som'));
     
             // Se a mensagem for do usuário selecionado, adiciona ao histórico
             if (newMessage.senderId === selectedUser?._id) {
@@ -210,6 +215,14 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
                         [senderId]: (unreadCounts[senderId] || 0) + 1,
                     },
                 });
+
+                // Notificação navegador
+                // showNotification(
+                //     '📩 Nova mensagem recebida!', {
+                //         body: `Mensagem de ${newMessage.senderName}`,
+                //         icon: '/logo.svg',
+                //     },
+                // )
             }
         });
     },
