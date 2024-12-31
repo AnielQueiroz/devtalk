@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 import { t } from "i18next";
 
 const ChatContainer = () => {
-  const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unsubscribeFromMessages } =
+  const { messages, getMessages, isMessagesLoading, selectedUser } =
     useChatStore();
   const { authUser } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -18,10 +18,7 @@ const ChatContainer = () => {
   useEffect(() => {
     if (selectedUser?._id) getMessages(selectedUser._id);
 
-    subscribeToMessages()
-
-    return () => unsubscribeFromMessages();
-  }, [selectedUser?._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
+  }, [selectedUser?._id, getMessages]);
 
   useEffect(() => {
     // Ignorar aviso de linting para incluir messages nas dependências
