@@ -14,14 +14,13 @@ import ThemePage from "./pages/ThemePage"
 import Terms from "./pages/TermsPage"
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
   const { theme } = useThemeStore();
   const location = useLocation();
 
-  console.log('onlines:', onlineUsers);
-
   useEffect(() => {
     checkAuth()
+ 
   }, [checkAuth]);
 
   if (isCheckingAuth && !authUser) return <LoadingCheck />
@@ -45,7 +44,7 @@ function App() {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
 
         {/* publics */}
-        <Route path="/terms" element={<Terms />}></Route>
+        <Route path="/terms" element={<Terms />} />
       </Routes>
 
       <Toaster
