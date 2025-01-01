@@ -8,7 +8,9 @@ import { useAuthStore } from "../store/useAuthStore";
 const Chats = () => {
   const {
     getInteractedUsers,
+    getUnreadCounts,
     users,
+    unreadCounts,
     selectedUser,
     setSelectedUser,
     setSelectedCommunity,
@@ -20,7 +22,9 @@ const Chats = () => {
 
   useEffect(() => {
     getInteractedUsers();
-  }, [getInteractedUsers]);
+    getUnreadCounts();
+
+  }, [getInteractedUsers, getUnreadCounts]);
 
   const filteredUsers = showOnlineOnly ? users.filter(user => onlineUsers.includes(user._id as string)) : users;
 
@@ -74,6 +78,12 @@ const Chats = () => {
                     {onlineUsers.includes(user._id) ? "Online" : "Offline"}
                   </div>
                 </div>
+
+                {unreadCounts[user._id] > 0 && (
+                  <div className="bg-primary text-sm text-white rounded-full w-6 h-6 flex items-center justify-center">
+                    {unreadCounts[user._id]}
+                  </div>
+                )}
               </button>
             ))}
 

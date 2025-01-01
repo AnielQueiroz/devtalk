@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { AxiosError } from 'axios';
 import { useAuthStore } from './useAuthStore';
+import { showNotification } from '../lib/util';
 
 interface User {
     _id: string;
@@ -29,6 +30,7 @@ interface Messages {
 interface ChatStoreState {
     messages: Messages[];
     users: User[];
+    unreadCounts: Record<string, number>;
     searchResults: {
         users: User[];
         communities: Community[];
@@ -39,6 +41,7 @@ interface ChatStoreState {
     isMessagesLoading: boolean;
     isSearchLoading: boolean;
     getUsers: () => Promise<void>;
+    getUnreadCounts: () => Promise<void>;
     getInteractedUsers: () => Promise<void>;
     getMessages: (userId: string) => Promise<void>;
     setSelectedUser: (selectedUser: User | null) => void;
@@ -52,6 +55,7 @@ interface ChatStoreState {
 export const useChatStore = create<ChatStoreState>((set, get) => ({
     messages: [],
     users: [],
+    unreadCounts: {},
     searchResults: null,
     community: [],
     selectedUser: null,
@@ -98,6 +102,15 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         try {
             const res = await axiosInstance.get(`/messages/${userId}`);
             set({ messages: res.data.messages });
+
+            await axiosInstance.put(`/messages/mark-as-read/${userId}`);
+
+            // Zerar a contagem de mensagens não lidas para o usuário selecionado
+            set((state) => {
+                const updatedUnreadCounts = { ...state.unreadCounts };
+                updatedUnreadCounts[userId] = 0;
+                return { unreadCounts: updatedUnreadCounts };
+            });
         } catch (error: unknown) {
             console.error('Erro ao buscar mensagens', error);
             if (error instanceof AxiosError) {
@@ -105,6 +118,25 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
             }
         } finally {
             set({ isMessagesLoading: false });
+        }
+    },
+
+    getUnreadCounts: async () => {
+        try {
+            const res = await axiosInstance.get('/messages/unread-messages-count');
+            const unreadCounts: Record<string, number> = {};
+
+            for (const item of res.data.unreadMessagesCounts) {
+                unreadCounts[item._id] = item.count;
+            };
+
+            set({ unreadCounts });
+        } catch (error: unknown) {
+            console.log('Erro ao buscar contagem de mensagens não lidas', error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            toast.error("Internal server error");
         }
     },
 
@@ -144,16 +176,54 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         }
     },
 
-    subscribeToMessages: () => {
-        const { selectedUser } = get();
-        if (!selectedUser) return;
+    // minha implementação
+    // subscribeToMessages: () => {
+    //     const { selectedUser } = get();
+    //     if (!selectedUser) return;
 
+    //     const socket = useAuthStore.getState().socket;
+
+    //     socket?.on("newMessage", (newMessage) => {
+    //         const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+    //         if (!isMessageSentFromSelectedUser) return;
+    //         set({ messages: [...get().messages, newMessage] });
+    //     });
+    // },
+
+    // chatgpt implementação
+    subscribeToMessages: () => {
         const socket = useAuthStore.getState().socket;
 
-        socket?.on("newMessage", (newMessage) => {
-            const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
-            if (!isMessageSentFromSelectedUser) return;
-            set({ messages: [...get().messages, newMessage] });
+        if (!socket) return console.error('Socket não está disponível!');
+    
+        socket.on("newMessage", (newMessage) => {
+            const { messages, selectedUser, unreadCounts } = get();
+
+            // notificar
+            const audio = new Audio("/sounds/notification.mp3");
+            audio.play().catch(() => console.error('Erro ao tocar o som'));
+    
+            // Se a mensagem for do usuário selecionado, adiciona ao histórico
+            if (newMessage.senderId === selectedUser?._id) {
+                set({ messages: [...messages, newMessage] });
+            } else {
+                // Incrementa a contagem de mensagens não lidas para o remetente
+                const senderId = newMessage.senderId;
+                set({
+                    unreadCounts: {
+                        ...unreadCounts,
+                        [senderId]: (unreadCounts[senderId] || 0) + 1,
+                    },
+                });
+
+                // Notificação navegador
+                // showNotification(
+                //     '📩 Nova mensagem recebida!', {
+                //         body: `Mensagem de ${newMessage.senderName}`,
+                //         icon: '/logo.svg',
+                //     },
+                // )
+            }
         });
     },
 

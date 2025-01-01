@@ -12,18 +12,31 @@ import LoadingCheck from "./components/LoadingCheck"
 import { useThemeStore } from "./store/useThemeStore"
 import ThemePage from "./pages/ThemePage"
 import Terms from "./pages/TermsPage"
+import { useChatStore } from "./store/useChatStore"
 
 function App() {
-  const { authUser, checkAuth, isCheckingAuth, onlineUsers } = useAuthStore();
+  const { authUser, checkAuth, isCheckingAuth, socket, connectSocket, disconnectSocket } = useAuthStore();
   const { theme } = useThemeStore();
   const location = useLocation();
 
-  console.log('onlines:', onlineUsers);
+  const { subscribeToMessages, unsubscribeFromMessages } = useChatStore();
 
   useEffect(() => {
-    checkAuth()
-  }, [checkAuth]);
+    checkAuth();
+    connectSocket();
 
+    return () => disconnectSocket(); 
+  }, [checkAuth, connectSocket, disconnectSocket]);
+
+  useEffect(() => {
+    if (socket && authUser) {
+      subscribeToMessages()
+    }
+
+    return () => unsubscribeFromMessages()
+  }, [authUser, socket, subscribeToMessages, unsubscribeFromMessages]);
+
+ 
   if (isCheckingAuth && !authUser) return <LoadingCheck />
 
   const pathsWithoutNavbar = ["/login", "/signup"];
@@ -45,7 +58,7 @@ function App() {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
 
         {/* publics */}
-        <Route path="/terms" element={<Terms />}></Route>
+        <Route path="/terms" element={<Terms />} />
       </Routes>
 
       <Toaster
