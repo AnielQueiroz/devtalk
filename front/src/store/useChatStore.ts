@@ -3,7 +3,6 @@ import { toast } from 'react-hot-toast';
 import { axiosInstance } from '../lib/axios';
 import { AxiosError } from 'axios';
 import { useAuthStore } from './useAuthStore';
-import { showNotification } from '../lib/util';
 
 interface User {
     _id: string;
