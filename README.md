@@ -19,9 +19,9 @@ DevTalk é uma comunidade em tempo real para programadores.
 5. Abra um Pull Request.
 
 ## Exemplo
-git checkout main
-git pull
-git checkout -b aniel/feature/novo-recurso
+- git checkout main
+- git pull
+- git checkout -b aniel/feature/novo-recurso
 
 ## Licença
 
