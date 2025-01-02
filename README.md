@@ -18,6 +18,11 @@ DevTalk é uma comunidade em tempo real para programadores.
 4. Faça push para a branch (`git push origin feature/nome-da-feature`).
 5. Abra um Pull Request.
 
+## Exemplo
+git checkout main
+git pull
+git checkout -b aniel/feature/novo-recurso
+
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
