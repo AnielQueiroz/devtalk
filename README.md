@@ -23,7 +23,7 @@ DevTalk é uma comunidade em tempo real para programadores.
 - git pull
 - git checkout -b seu-nome/feat/novo-recurso
 
-  # No primeiro push
+  ### No primeiro push
 - git push --set-upstream origin seu-nome/feat/novo-recurso
 
 ## Licença
