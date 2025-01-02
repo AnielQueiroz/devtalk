@@ -21,7 +21,7 @@ DevTalk é uma comunidade em tempo real para programadores.
 ## Exemplo
 - git checkout main
 - git pull
-- git checkout -b aniel/feature/novo-recurso
+- git checkout -b seu-nome/feature/novo-recurso
 
 ## Licença
 
