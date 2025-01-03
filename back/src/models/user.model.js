@@ -20,6 +20,12 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: "",
         },
+        joinedCommunities: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Community",
+            },
+        ],
     },
     {
         timestamps: true,
