@@ -6,6 +6,27 @@ const communitySchema = new moongose.Schema(
             type: String,
             required: true
         },
+        creatorId: {
+            type: moongose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+        isPublic: {
+            type: Boolean,
+            default: false
+        },
+        requestsToJoin: [
+            {
+                userId: {
+                    type: moongose.Schema.Types.ObjectId,
+                    ref: "User"
+                },
+                requestedAt: {
+                    type: Date,
+                    default: Date.now
+                }
+            }
+        ],
         description: {
             type: String,
             default: ""
@@ -34,7 +55,7 @@ const communitySchema = new moongose.Schema(
                 },
                 role: {
                     type: String,
-                    enum: ["admin", "member"],
+                    enum: ["admin", "member", "moderator"],
                     default: "member"
                 }
             }

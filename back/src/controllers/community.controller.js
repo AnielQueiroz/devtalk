@@ -7,7 +7,7 @@ import Tag from "../models/tags.model.js";
 import mongoose from "mongoose";
 
 export const createCommunity = async (req, res) => {
-    const { name, description, photoUrl, tags } = req.body;
+    const { name, description, isPublic, photoUrl, tags } = req.body;
 
     if (!name) return res.status(400).json({ message: "Nome é obrigatório!" });
     if (!tags || tags.length === 0) return res.status(400).json({ message: "Pelo menos uma tag é obrigatória!" });
@@ -20,6 +20,9 @@ export const createCommunity = async (req, res) => {
         const newCommunity = await Community({
             name,
             description,
+            creatorId: req.user._id,
+            isPublic: isPublic || false,
+            requestsToJoin: [],
             photoUrl,
             tags,
             members: [
@@ -445,7 +448,7 @@ export const getCommunitiesAllOrSearch = async (req, res) => {
         }
 
         // Encontrar todas as comunidades que correspondem aos filtros
-        const communities = await Community.find(filter).select("-members").populate("tags", "_id name");  // Popula as tags para retornar os dados completos das tags
+        const communities = await Community.find(filter).select("-members").populate("tags", "_id name").populate("creatorId", "_id fullName");
 
         // Retorna as comunidades encontradas
         return res.status(200).json({ communities });
