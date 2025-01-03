@@ -7,10 +7,12 @@ import { useChatStore } from "../store/useChatStore";
 import ChatContainer from "../components/ChatContainer";
 import NoChatSelected from "../components/NoChatSelected";
 import CommunityContainer from "../components/CommunityContainer";
+import { useCommunityStore } from "../store/useCommunityStore";
 
 const HomePage = () => {
   const [selectedMenu, setSelectedMenu] = useState("contacts");
-  const { selectedUser, selectedCommunity } = useChatStore();
+  const { selectedUser } = useChatStore();
+  const { selectedCommunity } = useCommunityStore();
 
   const handleMenuSelect = (menu: string) => {
     setSelectedMenu(menu);
