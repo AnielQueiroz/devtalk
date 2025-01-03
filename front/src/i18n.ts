@@ -69,6 +69,7 @@ const resources = {
 			chats: "Conversas",
 			searchResults: "Resultados da busca",
 			user: "Usuário",
+			noCommunitiesHere: "Nenhuma comunidade aqui, busque ou crie uma nova!",
 		},
 	},
 	en: {
@@ -135,6 +136,7 @@ const resources = {
 			chats: "Chats",
 			searchResults: "Search results",
 			user: "User",
+			noCommunitiesHere: "No communities here, search or create a new one!",
 		},
 	},
 	ja: {
