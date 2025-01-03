@@ -238,7 +238,7 @@ export const getCommunityMessages = async (req, res) => {
             .sort({ createdAt: -1 }) // Ordena por data decrescente (mais recente primeiro)
             .skip((page - 1) * limit) // Ignora as mensagens das páginas anteriores
             .limit(Number.parseInt(limit)) // Limita o número de mensagens por página
-            .populate('senderId', 'name avatar') // Popula informações do remetente
+            .populate('senderId', 'fullName profilePic') // Popula informações do remetente
             .lean(); // Retorna objetos JavaScript puros para melhor desempenho
 
         // Contar o total de mensagens para paginação
@@ -448,10 +448,27 @@ export const getCommunitiesAllOrSearch = async (req, res) => {
         }
 
         // Encontrar todas as comunidades que correspondem aos filtros
-        const communities = await Community.find(filter).select("-members").populate("tags", "_id name").populate("creatorId", "_id fullName");
+        const communities = await Community.find(filter).select("-members -requestsToJoin -updatedAt").populate("tags", "_id name").populate("creatorId", "_id fullName");
 
         // Retorna as comunidades encontradas
         return res.status(200).json({ communities });
+    } catch (error) {
+        console.log("Erro ao buscar comunidades: ", error);
+        return res.status(500).json({ message: "Erro ao buscar comunidades" });
+    }
+};
+
+export const getCommunitiesThatIBelong = async (req, res) => {
+    const myId = req.user._id;
+
+    try {
+        // Encontrar todas as comunidades em que o usuário está como membro pelo id da comunidade salva em joinedCommunities
+        const communities = await User.findById(myId).select("joinedCommunities").populate({
+            path: "joinedCommunities",
+            select: "_id name photoUrl",
+        });
+
+        return res.status(200).json(communities.joinedCommunities);
     } catch (error) {
         console.log("Erro ao buscar comunidades: ", error);
         return res.status(500).json({ message: "Erro ao buscar comunidades" });
