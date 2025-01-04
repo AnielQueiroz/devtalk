@@ -4,9 +4,11 @@ import { useChatStore } from "../store/useChatStore";
 
 interface ChatHeaderProps {
   title: string;
+  type: "user" | "community";
+  desc?: string;
 }
 
-const ChatHeader = ({ title }: ChatHeaderProps) => {
+const ChatHeader = ({ title, type, desc }: ChatHeaderProps) => {
   const { selectedUser, setSelectedUser } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
@@ -28,9 +30,7 @@ const ChatHeader = ({ title }: ChatHeaderProps) => {
           <div>
             <h3 className="font-medium">{title}</h3>
             <p className="text-sm text-base-content/70">
-              {onlineUsers.includes(selectedUser?._id as string)
-                ? "Online"
-                : "Offline"}
+              {type === "user" ? onlineUsers.includes(selectedUser?._id as string) ? "Online" : "Offline" : desc}
             </p>
           </div>
         </div>
