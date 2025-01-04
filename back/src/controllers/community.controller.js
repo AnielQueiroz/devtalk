@@ -465,7 +465,7 @@ export const getCommunitiesThatIBelong = async (req, res) => {
         // Encontrar todas as comunidades em que o usuário está como membro pelo id da comunidade salva em joinedCommunities
         const communities = await User.findById(myId).select("joinedCommunities").populate({
             path: "joinedCommunities",
-            select: "_id name photoUrl",
+            select: "_id name photoUrl description",
         });
 
         return res.status(200).json(communities.joinedCommunities);
