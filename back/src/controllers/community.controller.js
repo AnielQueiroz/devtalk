@@ -235,7 +235,7 @@ export const getCommunityMessages = async (req, res) => {
 
         // Buscar mensagens com paginação
         const messages = await GroupMessage.find({ communityId })
-            .sort({ createdAt: -1 }) // Ordena por data decrescente (mais recente primeiro)
+            // .sort({ createdAt:  }) // Ordena por data decrescente (mais recente primeiro)
             .skip((page - 1) * limit) // Ignora as mensagens das páginas anteriores
             .limit(Number.parseInt(limit)) // Limita o número de mensagens por página
             .populate('senderId', 'fullName profilePic') // Popula informações do remetente
