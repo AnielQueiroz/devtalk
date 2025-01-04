@@ -19,7 +19,7 @@ const CommunityContainer = () => {
   if (isMessagesLoading) {
     return (
       <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
-        <ChatHeader title={"Community"} />
+        <ChatHeader type="community" title={"Community"} />
         <MessageSkeleton />
         <MessageInput />
       </div>
@@ -28,7 +28,7 @@ const CommunityContainer = () => {
 
   return (
     <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
-      <ChatHeader title={selectedCommunity?.name || ""} />
+      <ChatHeader type="community" desc={selectedCommunity?.description} title={selectedCommunity?.name || ""} />
       
       <div className="overflow-y-auto flex-1 p-4 space-y-4 bg-base-100">
         {communityMessages.map((msg) => (
