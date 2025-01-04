@@ -30,7 +30,7 @@ const ChatContainer = () => {
   if (isMessagesLoading)
     return (
       <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
-        <ChatHeader title={"User"} />
+        <ChatHeader type="user" title={"User"} />
         <MessageSkeleton />
         <MessageInput />
       </div>
@@ -57,7 +57,7 @@ const ChatContainer = () => {
         </div>
       )}
       
-      <ChatHeader title={selectedUser?.fullName || ""} />
+      <ChatHeader type="user" title={selectedUser?.fullName || ""} />
 
       <div className="overflow-y-auto flex-1 p-4 space-y-4 bg-base-100">
         {messages.map((msg) => (
