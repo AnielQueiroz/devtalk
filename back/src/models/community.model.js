@@ -9,7 +9,6 @@ const communitySchema = new moongose.Schema(
         creatorId: {
             type: moongose.Schema.Types.ObjectId,
             ref: "User",
-            required: true
         },
         isPublic: {
             type: Boolean,
