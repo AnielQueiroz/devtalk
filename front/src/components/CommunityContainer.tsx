@@ -19,7 +19,7 @@ const CommunityContainer = () => {
   if (isMessagesLoading) {
     return (
       <div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
-        <ChatHeader type="community" title={"Community"} />
+        <ChatHeader type="community" title={selectedCommunity?.name as string} desc={selectedCommunity?.description} />
         <MessageSkeleton />
         <MessageInput />
       </div>
@@ -38,6 +38,7 @@ const CommunityContainer = () => {
               msg.senderId._id === authUser?._id ? "chat-end" : "chat-start"
             }`}
           >
+            {/* Avatar */}
             <div className="chat-image avatar">
               <div className="size-10 rounded-full border">
                 <img
@@ -46,13 +47,16 @@ const CommunityContainer = () => {
                 />
               </div>
             </div>
-            <div className="chat-header mb-1">
+            <div className="chat-header flex items-baseline mb-1">
+              <h4 className="font-bold">
+                {msg.senderId._id === authUser?._id ? t('you') : msg.senderId.fullName}
+              </h4>
               <time className="text-xs opacity-50 ml-1">
                 {msg.createdAt && formatMessageTime(new Date(msg.createdAt))}
               </time>
             </div>
             <div className={`chat-bubble flex flex-col ${
-                msg.senderId._id === authUser?._id ? "bg-primary text-primary-content" : "bg-secondary-text text-secondary-content"
+                msg.senderId._id === authUser?._id ? "bg-primary text-primary-content" : "bg-secondary text-secondary-content"
               }`}
             >
               {msg.image && (
