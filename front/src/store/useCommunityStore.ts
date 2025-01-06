@@ -8,9 +8,9 @@ interface Community {
     _id: string;
     isPublic: boolean;
     name: string;
-    description: string;
-    photoUrl: string;
-    tags: Record<string, string>[];
+    description?: string | undefined;
+    photoUrl?: string | undefined;
+    tags: Record<string, string>[] | undefined;
     creatorId: Record<string, string>;
     createdAt: string;
 };
@@ -47,6 +47,7 @@ interface CommunityStoreState {
     isCommunitiesLoading: boolean;
     isMessagesLoading: boolean;
     setSelectedCommunity: (community: Community | null) => void;
+    setCommunities: (communities: Community[] | undefined) => void;
     getCommunities: (query: string) => Promise<void>;
     getCommunity: (id: number) => Promise<void>;
     getMyCommunities: () => Promise<void>;
@@ -64,8 +65,8 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
     getCommunities: async (query: string) => {
         set({ isCommunitiesLoading: true });
         try {
-            const res =  await axiosInstance.get(`/community/search?query=${query}`);
-            set({ communities: res.data });
+            const res =  await axiosInstance.get(`/community/search?name=${query}&tagName=${query}`);
+            set({ communities: res.data.communities });
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof AxiosError) {
@@ -137,4 +138,6 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
     getCommunity: async (id: number) => {},
 
     setSelectedCommunity: (community: Community | null) => set({ selectedCommunity: community }),
+    
+    setCommunities: (communities: Community[] | undefined) => set({ communities }),
 }));
