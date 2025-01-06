@@ -427,28 +427,25 @@ export const getCommunitiesAllOrSearch = async (req, res) => {
     const { name, tagName } = req.query; // Parâmetros da query: nome da comunidade ou nome da tag
 
     try {
-        const filter = {};
+        const filter = [];
 
-        // Se o nome da comunidade foi fornecido, filtra pelo nome
+        // Se o nome da comunidade foi fornecido, adiciona a condição de filtro
         if (name) {
-            filter.name = { $regex: name, $options: "i" };  // Busca insensível a maiúsculas e minúsculas
+            filter.push({ name: { $regex: name, $options: "i" } });  // Busca insensível a maiúsculas e minúsculas
         }
 
-        // Se o nome da tag foi fornecido, filtra pelas tags
+        // Se o nome da tag foi fornecido, adiciona a condição de filtro
         if (tagName) {
             // Encontrar as tags com o nome fornecido
             const tags = await Tag.find({ name: { $regex: tagName, $options: "i" } }).select("_id");
             if (tags.length > 0) {
-                // Filtra as comunidades que possuem essas tags
-                filter.tags = { $in: tags.map(tag => tag._id) }; // Match pelo ID das tags
-            } else {
-                // Se nenhuma tag for encontrada com o nome, retorna uma lista vazia
-                return res.status(404).json({ message: "Nenhuma tag encontrada com esse nome" });
+                // Adiciona a condição de filtro para as tags
+                filter.push({ tags: { $in: tags.map(tag => tag._id) } }); // Match pelo ID das tags
             }
         }
 
         // Encontrar todas as comunidades que correspondem aos filtros
-        const communities = await Community.find(filter).select("-members -requestsToJoin -updatedAt").populate("tags", "_id name").populate("creatorId", "_id fullName");
+        const communities = await Community.find(filter.length > 0 ? { $or: filter } : {}).select("-members -requestsToJoin -updatedAt").populate("tags", "_id name").populate("creatorId", "_id fullName");
 
         // Retorna as comunidades encontradas
         return res.status(200).json({ communities });
