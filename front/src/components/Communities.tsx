@@ -91,7 +91,7 @@ const Communities = () => {
 					</div>
 
 					{/* Botão fixo flutuante */}
-					<div className="relative bottom-4 right-[-20rem] z-50">
+					{/* <div className="relative bottom-4 right-[-20rem] z-50">
 						<button
 							type="button"
 							className="btn btn-primary rounded-lg"
@@ -100,7 +100,7 @@ const Communities = () => {
 						>
 							<Plus className="size-4" />
 						</button>
-					</div>
+					</div> */}
 				</div>
 			)}
 		</>
