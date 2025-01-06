@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { useAuthStore } from "../store/useAuthStore";
 import { useChatStore } from "../store/useChatStore";
+import { useCommunityStore } from "../store/useCommunityStore";
 
 interface ChatHeaderProps {
   title: string;
@@ -10,6 +11,7 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ title, type, desc }: ChatHeaderProps) => {
   const { selectedUser, setSelectedUser } = useChatStore();
+  const { setSelectedCommunity} = useCommunityStore();
   const { onlineUsers } = useAuthStore();
 
   return (
@@ -36,7 +38,10 @@ const ChatHeader = ({ title, type, desc }: ChatHeaderProps) => {
         </div>
 
         {/* Close button */}
-        <button type="button" onClick={() => setSelectedUser(null)}>
+        <button type="button" onClick={() => {
+          if (type === "user") setSelectedUser(null);
+          else setSelectedCommunity(null);
+        }}>
           <X />
         </button>
       </div>
