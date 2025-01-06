@@ -71,6 +71,7 @@ const resources = {
 			user: "Usuário",
 			noCommunitiesHere: "Nenhuma comunidade aqui, busque ou crie uma nova!",
 			you: "Você",
+			community: "Comunidade",
 		},
 	},
 	en: {
@@ -139,6 +140,7 @@ const resources = {
 			user: "User",
 			noCommunitiesHere: "No communities here, search or create a new one!",
 			you: "You",
+			community: "Community",
 		},
 	},
 	ja: {
