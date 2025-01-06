@@ -4,18 +4,23 @@ import { useChatStore } from "../store/useChatStore";
 import { Send, X, Image } from "lucide-react";
 import { t } from "i18next";
 import toast from "react-hot-toast";
+import { useCommunityStore } from "../store/useCommunityStore";
 
+interface InputProps {
+	type: "user" | "community";
+}
 
-const MessageInput = () => {
+const MessageInput = ({ type }: InputProps) => {
 	const [text, setText] = useState("");
 	const [imgPreview, setImgPreview] = useState<string | ArrayBuffer | null>(
 		null,
 	);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage } = useChatStore();
+	const textAreaRef = useRef<HTMLTextAreaElement>(null);
+	const { sendMessage } = useChatStore();
+	const { sendCommunityMessages } = useCommunityStore();
 
-  // 🖼️ Seleção de Imagem
+	// 🖼️ Seleção de Imagem
 	const handleImgSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
 		e.preventDefault();
 
@@ -36,53 +41,63 @@ const MessageInput = () => {
 	};
 
 	// 🗑️ Remover Imagem
-  const removeImg = () => {
+	const removeImg = () => {
 		setImgPreview(null);
 		if (fileInputRef.current) fileInputRef.current.value = "";
 	};
 
 	// 📨 Enviar Mensagem
-  const handleSendMsg = async (e: React.FormEvent<HTMLFormElement>) => {
+	const handleSendMsg = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		if (!text.trim() && !imgPreview) return;
 		try {
-			await sendMessage({
-				text: text.trim(),
-				image: imgPreview,
-			});
+			switch (type) {
+				case "user":
+					await sendMessage({
+						text: text.trim(),
+						image: imgPreview,
+					});
+					break;
+				case "community":
+					await sendCommunityMessages({
+						text: text.trim(),
+						image: imgPreview,
+					})
+					break;
+			}
 
 			setText("");
 			setImgPreview(null);
 			if (fileInputRef.current) fileInputRef.current.value = "";
-      if (textAreaRef.current) textAreaRef.current.style.height = "auto";
+			if (textAreaRef.current) textAreaRef.current.style.height = "auto";
 		} catch (error) {
 			console.log("Erro ao enviar mensagem", error);
 		}
 	};
 
-  // ↕️ Ajustar a altura do textarea
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
+	// ↕️ Ajustar a altura do textarea
+	const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setText(e.target.value);
 
-    // Ajuste dinâmico da altura do textarea
-    if (textAreaRef.current) {
-      textAreaRef.current.style.height = "auto";
-      if (textAreaRef.current.scrollHeight < 116) {
-        textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
-      } else {
-        textAreaRef.current.style.height = "116px";
-        textAreaRef.current.style.overflowY = "auto";
-      }
-    }
-  };
+		// Ajuste dinâmico da altura do textarea
+		if (textAreaRef.current) {
+			textAreaRef.current.style.height = "auto";
+			if (textAreaRef.current.scrollHeight < 116) {
+				textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+			} else {
+				textAreaRef.current.style.height = "116px";
+				textAreaRef.current.style.overflowY = "auto";
+			}
+		}
+	};
 
-  // 📚 Lógica para Enter e Shift + Enter
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMsg(e as unknown as React.FormEvent<HTMLFormElement>);
-    }
-  };
+	// 📚 Lógica para Enter e Shift + Enter
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			handleSendMsg(e as unknown as React.FormEvent<HTMLFormElement>);
+		}
+	};
 
 	return (
 		<div className="p-4 w-full bg-base-200">
@@ -107,17 +122,17 @@ const MessageInput = () => {
 			)}
 
 			{/* Area de Texto e Botoes */}
-      <form onSubmit={handleSendMsg} className="flex items-center gap-2">
+			<form onSubmit={handleSendMsg} className="flex items-center gap-2">
 				<div className="flex-1 flex gap-2">
 					<textarea
-            ref={textAreaRef}
+						ref={textAreaRef}
 						className="w-full textarea textarea-bordered rounded-lg textarea-sm sm:textarea-md"
 						placeholder={t("phTypeMessage")}
 						value={text}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            style={{ maxHeight: "116px" }}
+						onChange={handleInputChange}
+						onKeyDown={handleKeyDown}
+						rows={1}
+						style={{ maxHeight: "116px" }}
 					/>
 					<input
 						type="file"
