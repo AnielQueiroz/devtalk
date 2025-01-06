@@ -4,6 +4,7 @@ import { useCommunityStore } from "../store/useCommunityStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import TitleMenuAside from "./TitleMenuAside";
 import { useEffect } from "react";
+import { useChatStore } from "../store/useChatStore";
 
 const Communities = () => {
 	const {
@@ -13,6 +14,8 @@ const Communities = () => {
 		setSelectedCommunity,
 		getMyCommunities,
 	} = useCommunityStore();
+
+	const { setSelectedUser } = useChatStore();
 
 	useEffect(() => {
 		getMyCommunities();
@@ -68,6 +71,7 @@ const Communities = () => {
 								key={community._id}
 								onClick={() => {
 									setSelectedCommunity(community);
+									setSelectedUser(null);
 								}}
 								className={`w-full p-3 flex items-center gap-3 hover:bg-base-300 transition-colors ${
 									selectedCommunity?._id === community._id
