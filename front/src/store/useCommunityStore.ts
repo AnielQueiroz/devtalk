@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
+import { useAuthStore } from "./useAuthStore";
 
 interface Community {
     _id: string;
@@ -34,6 +35,11 @@ interface Message {
     updatedAt: string;
 }
 
+interface SendMsgProps {
+    text?: string | null;
+    image?: string | ArrayBuffer | null;
+}
+
 interface CommunityStoreState {
     communities: Community[];
     communityMessages: Message[];
@@ -45,6 +51,7 @@ interface CommunityStoreState {
     getCommunity: (id: number) => Promise<void>;
     getMyCommunities: () => Promise<void>;
     getCommunityMessages: (id: string) => Promise<void>;
+    sendCommunityMessages: ({ image, text }: { image: string | ArrayBuffer | null; text: string | null; }) => Promise<void>;
 }
 
 export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
@@ -102,6 +109,28 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
             toast.error("Oops! Something went wrong. Try again later!");
         } finally {
             set({ isMessagesLoading: false });
+        }
+    },
+
+    sendCommunityMessages: async ({ image, text }: SendMsgProps) => {
+        const { selectedCommunity, communityMessages} = get();
+        const me = useAuthStore.getState().authUser;
+
+        if (!selectedCommunity) return;
+
+        try {
+            const res = await axiosInstance(`community/send-message/${selectedCommunity?._id}`, {
+                method: "POST",
+                data: { image, text },
+            });
+            const messageWithMySender = { ...res.data.newMessage, senderId: { _id: me?._id, fullName: me?.fullName, profilePic: me?.profilePic } };
+            set({ communityMessages: [...communityMessages || [], messageWithMySender] });
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            toast.error("Oops! Something went wrong. Try again later!");
         }
     },
 
