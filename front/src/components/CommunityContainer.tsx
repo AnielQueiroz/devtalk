@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCommunityStore } from "../store/useCommunityStore";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
@@ -6,6 +6,7 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime, isCodeMessage } from "../lib/util";
 import { t } from "i18next";
+import Loading from "./Loading";
 
 const CommunityContainer = () => {
 	const {
@@ -13,9 +14,14 @@ const CommunityContainer = () => {
 		getCommunityMessages,
 		isMessagesLoading,
 		communityMessages,
+		joinCommunity,
+		isJoining,
+		getMyCommunities,
 	} = useCommunityStore();
 	// const messagesEndRef = useRef<HTMLDivElement>(null);
-	const { authUser } = useAuthStore();
+	const { authUser, checkAuth } = useAuthStore();
+
+	const [hasJoined, setHasJoined] = useState(false);
 
 	useEffect(() => {
 		if (
@@ -24,12 +30,6 @@ const CommunityContainer = () => {
 		)
 			getCommunityMessages(selectedCommunity._id);
 	}, [selectedCommunity?._id, getCommunityMessages]);
-
-	const joinCommunity = async (communityId: string) => {
-		if (communityId) {
-			console.log(selectedCommunity);
-		}
-	};
 
 	// Verifica se o usuário pertence à comunidade
 	const IBelongToThisCommunity = () => {
@@ -47,6 +47,15 @@ const CommunityContainer = () => {
 			return selectedCommunity?.isPublic;
 		}
 		return false;
+	};
+
+	const handleJoinCommunity = async (communityId: string) => {
+		if (communityId) {
+			await joinCommunity(communityId);
+			setHasJoined(true);
+			getMyCommunities();
+			checkAuth();
+		}
 	};
 
 	// Caso esteja carregando as mensagens
@@ -85,7 +94,7 @@ const CommunityContainer = () => {
 							<button
 								type="button"
 								className="btn btn-primary"
-								onClick={() => joinCommunity(selectedCommunity?._id as string)}
+								// onClick={() => joinCommunity(selectedCommunity?._id as string)}
 							>
 								{t("requestToJoin")}
 							</button>
@@ -207,15 +216,19 @@ const CommunityContainer = () => {
 				)}
 			</div>
 
-			{isPublicToJoin() && !IBelongToThisCommunity() ? (
+			{isPublicToJoin() && !IBelongToThisCommunity() && !hasJoined ? (
 				<div className="p-4 w-full flex justify-between items-center bg-base-200 z-10 border-top border-base-300">
 					<p className="text-base text-zinc-600">{t("becomeAMemberToType")}</p>
 					<button
 						type="button"
 						className="btn btn-primary"
-						onClick={() => joinCommunity(selectedCommunity?._id as string)}
+						onClick={() => handleJoinCommunity(selectedCommunity?._id as string)}
 					>
-						{t("enter")}
+						{isJoining ? (
+							<Loading />
+						) : (
+							t("enter")
+						)}
 					</button>
 				</div>
 			) : (
