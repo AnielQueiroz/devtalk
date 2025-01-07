@@ -105,12 +105,12 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
 
     getCommunityMessages: async (id: string) => {
         const PAGE = 1;
-        const LIMIT = 10;
+        const LIMIT = 30;
         
         set({ isMessagesLoading: true });
         try {
             const res = await axiosInstance.get(`/community/${id}/messages?page=${PAGE}&limit=${LIMIT}`);
-            set({ communityMessages: res.data.messages });
+            set({ communityMessages: res.data.messages.reverse() });
         } catch (error: unknown) {
             console.error(error);
             if (error instanceof AxiosError) {
