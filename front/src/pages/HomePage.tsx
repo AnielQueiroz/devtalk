@@ -1,5 +1,5 @@
 import { t } from "i18next";
-import { Group, MessageCircle } from "lucide-react";
+import { MessageCircle, Users } from "lucide-react";
 import { useState } from "react";
 import Chats from "../components/Chats";
 import Communities from "../components/Communities";
@@ -44,13 +44,13 @@ const HomePage = () => {
               data-tip={t("communities")}
               onClick={() => handleMenuSelect("communities")}
             >
-              <Group className="size-6" />
+              <Users className="size-6" />
             </button>
           </li>
         </ul>
       </aside>
 
-      <div className="h-full w-full md:w-72 lg:w-96">
+      <div className="h-full w-full md:w-72 lg:w-96 border-r border-primary/30">
         {selectedMenu === "contacts" && <Chats />}
         {selectedMenu === "communities" && <Communities />}
       </div>
