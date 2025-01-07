@@ -65,6 +65,7 @@ export const login = async (req, res) => {
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
             joinedCommunities: user.joinedCommunities,
+            pendingCommunities: user.pendingCommunities
         });
     } catch (error) {
         console.log("Erro ao fazer login: ", error);
