@@ -58,6 +58,7 @@ interface CommunityStoreState {
     getCommunityMessages: (id: string) => Promise<void>;
     sendCommunityMessages: ({ image, text }: { image: string | ArrayBuffer | null; text: string | null; }) => Promise<void>;
     joinCommunity: (communityId: string) => Promise<void>;
+    requestTojoinCommunity: (communityId: string) => Promise<void>;
 }
 
 export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
@@ -166,6 +167,24 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
                 toast.error(error.response?.data.message);
             }
             toast.error("Oops! Something went wrong. Try again later!");
+        } finally {
+            set({ isJoining: false });
+        }
+    },
+
+    requestTojoinCommunity: async (communityId: string) => {
+        if (!communityId) return;
+
+        set({ isJoining: true });
+        try {
+            const res = await axiosInstance.post(`community/join-request/${communityId}`);
+            toast.success(res.data.message);
+        } catch (error) {
+            console.log(error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            // toast.error("Oops! Something went wrong. Try again later!");
         } finally {
             set({ isJoining: false });
         }
