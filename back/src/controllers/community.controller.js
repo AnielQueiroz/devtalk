@@ -345,6 +345,62 @@ export const joinCommunity = async (req, res) => {
     }
 };
 
+export const requestToJoinCommunity = async (req, res) => {
+    const { id: communityId } = req.params;
+    const myId = req.user._id;
+
+    if (!communityId) return res.status(400).json({ message: "ID da comunidade é obrigatório!" });
+
+    if (!myId) return res.status(400).json({ message: "ID do usuário é obrigatório!" });
+
+    const session = await mongoose.startSession();
+
+    try {
+        session.startTransaction();
+
+        // Verificar se a comunidade existe
+        const community = await Community.findById(communityId).session(session);
+        if (!community) {
+            return res.status(404).json({ message: "Comunidade não encontrada!" });
+        }
+
+        // Verificar se o usuário existe
+        const user = await User.findById(myId).session(session);
+        if (!user) {
+            return res.status(404).json({ message: "Usuário não encontrado!" });
+        }
+
+        // Verificar se o usuário está na comunidade (no lado do usuário)
+        if (user.joinedCommunities.includes(communityId)) {
+            return res.status(400).json({ message: "Você já está na comunidade!" });
+        }
+
+        // Verificar se o usuário ja solicitou para entrar na comunidade
+        if (community.requestsToJoin.some((request) => request.userId.equals(myId))) {
+            return res.status(400).json({ message: "Você já solicitou para entrar na comunidade!" });
+        }
+
+        // Adicionar a comunidade ao usuário
+        user.pendingCommunities.push(communityId);
+        await user.save({ session });
+
+        // Adicionar o usuário ao array requestsToJoin da comunidade
+        community.requestsToJoin.push({ userId: myId });
+        await community.save({ session });
+
+        // Finalizar a transação
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(200).json({ message: " Solicitação enviada com sucesso!" });
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        console.error("Erro ao solicitar entrar na comunidade: ", error);
+        return res.status(500).json({ message: "Erro ao solicitar entrar na comunidade!", error: error.message });
+    }
+};
+
 export const leaveCommunity = async (req, res) => {
     const { id: communityId } = req.params;
     const myId = req.user._id;
