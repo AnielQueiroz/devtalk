@@ -26,6 +26,12 @@ const userSchema = new mongoose.Schema(
                 ref: "Community",
             },
         ],
+        pendingCommunities: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Community",
+            }
+        ]
     },
     {
         timestamps: true,
