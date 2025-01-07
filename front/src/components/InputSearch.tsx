@@ -71,7 +71,7 @@ const InputSearch = () => {
     setUsersResults,
   } = useChatStore();
 
-  const { communities, setCommunities, getCommunities, setSelectedCommunity, isCommunitiesLoading } = useCommunityStore();
+  const { communitySearchResults, setCommunitySearchResults, getCommunities, setSelectedCommunity, isCommunitiesLoading } = useCommunityStore();
 
   useEffect(() => {
     if (search.length > 2) {
@@ -88,14 +88,14 @@ const InputSearch = () => {
       setSelectedCommunity(null);
     } else {
       setSelectedUser(null);
-	  setSelectedCommunity(item as Community);
+	    setSelectedCommunity(item as Community);
     }
     setSearch("");
   };
 
   const handleSelectRadio = (category: "user" | "community") => {
     setSelectedCategory(category);
-    if (category === "user") setCommunities(undefined);
+    if (category === "user") setCommunitySearchResults(undefined);
     if (category === "community") setUsersResults(null);
   };
 
@@ -139,7 +139,7 @@ const InputSearch = () => {
             <div className="flex justify-center">
               <Loading />
             </div>
-          ) : usersResults?.length === 0 && communities?.length === 0 ? (
+          ) : usersResults?.length === 0 && communitySearchResults?.length === 0 ? (
             <p className="text-sm text-base-content text-center">
               {t("noResults")}
             </p>
@@ -150,7 +150,7 @@ const InputSearch = () => {
               </p>
               <div className="divider divider-neutral" />
               <SearchResults
-                results={selectedCategory === "user" ? usersResults : communities}
+                results={selectedCategory === "user" ? usersResults : communitySearchResults}
                 onSelect={handleSelectItem}
                 type={selectedCategory}
               />
