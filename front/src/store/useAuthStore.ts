@@ -36,6 +36,7 @@ interface User {
 	profilePic?: string;
 	createdAt: string;
 	updatedAt: string;
+	joinedCommunities: string[];
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
