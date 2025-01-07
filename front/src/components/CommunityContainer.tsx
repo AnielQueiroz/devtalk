@@ -18,9 +18,38 @@ const CommunityContainer = () => {
 	const { authUser } = useAuthStore();
 
 	useEffect(() => {
-		if (selectedCommunity?._id) getCommunityMessages(selectedCommunity._id);
+		if (
+			selectedCommunity?._id &&
+			(IBelongToThisCommunity() || isPublicToJoin())
+		)
+			getCommunityMessages(selectedCommunity._id);
 	}, [selectedCommunity?._id, getCommunityMessages]);
 
+	const joinCommunity = async (communityId: string) => {
+		if (communityId) {
+			console.log(selectedCommunity);
+		}
+	};
+
+	// Verifica se o usuário pertence à comunidade
+	const IBelongToThisCommunity = () => {
+		if (selectedCommunity) {
+			return authUser?.joinedCommunities.some(
+				(id) => id.toString() === selectedCommunity?._id,
+			);
+		}
+		return false;
+	};
+
+	// Verifica se a comunidade é publica
+	const isPublicToJoin = () => {
+		if (selectedCommunity) {
+			return selectedCommunity?.isPublic;
+		}
+		return false;
+	};
+
+	// Caso esteja carregando as mensagens
 	if (isMessagesLoading) {
 		return (
 			<div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
@@ -31,6 +60,51 @@ const CommunityContainer = () => {
 				/>
 				<MessageSkeleton />
 				<MessageInput type="community" />
+			</div>
+		);
+	}
+
+	// Caso a comunidade seja privada e o usuário não pertencer à comunidade
+	if (!IBelongToThisCommunity() && !isPublicToJoin()) {
+		return (
+			<div className="h-full absolute w-full md:static left-0 top-0 flex flex-col z-[800]">
+				<ChatHeader
+					type="community"
+					desc={selectedCommunity?.description}
+					title={selectedCommunity?.name || ""}
+				/>
+
+				<div className="relative flex-1 overflow-hidden">
+					<MessageSkeleton />
+					<div className="absolute inset-0 flex items-center justify-center backdrop-blur-md bg-black/30 z-10 opacity-80">
+						<div className="bg-white p-6 rounded-lg shadow-md text-center">
+							<h2 className="text-2xl font-bold mb-2">
+								{t("privateCommunity")}
+							</h2>
+							<p className="text-zinc-600 mb-4">{t("accessDeniedCommunity")}</p>
+							<button
+								type="button"
+								className="btn btn-primary"
+								onClick={() => joinCommunity(selectedCommunity?._id as string)}
+							>
+								{t("requestToJoin")}
+							</button>
+						</div>
+					</div>
+				</div>
+
+				{/* <div className="p-4 w-full bg-base-200 z-10">
+					<div className="flex justify-between items-center gap-2">
+						<p className="text-base text-zinc-600">{t("requestToJoin")}</p>
+						<button
+							type="button"
+							className="btn btn-primary"
+							onClick={() => joinCommunity(selectedCommunity?._id as string)}
+						>
+							{t("requestHere")}
+						</button>
+					</div>
+				</div> */}
 			</div>
 		);
 	}
@@ -53,16 +127,26 @@ const CommunityContainer = () => {
 					>
 						{/* Avatar */}
 						<div className="chat-image avatar">
-							<div className="size-10 rounded-full border">
-								<img
-									src={msg.senderId.profilePic || "/avatar.png"}
-									alt={
-										msg.senderId._id === authUser?._id
-											? "Your profile picture"
-											: `${msg.senderId.fullName}'s profile picture`
-									}
-								/>
-							</div>
+							{msg.senderId.profilePic ? (
+								<div className="size-10 rounded-full border">
+									<img
+										src={msg.senderId.profilePic || "/avatar.png"}
+										alt={
+											msg.senderId._id === authUser?._id
+												? "Your profile picture"
+												: `${msg.senderId.fullName}'s profile picture`
+										}
+									/>
+								</div>
+							) : (
+								<div className="avatar placeholder">
+									<div className="bg-neutral text-neutral-content size-10 rounded-full">
+										<span className="text-sm">
+											{msg.senderId.fullName.slice(0, 2).toLocaleUpperCase()}
+										</span>
+									</div>
+								</div>
+							)}
 						</div>
 						<div className="chat-header flex items-baseline mb-1">
 							<h4 className="font-bold">
@@ -123,7 +207,20 @@ const CommunityContainer = () => {
 				)}
 			</div>
 
-			<MessageInput type="community" />
+			{isPublicToJoin() && !IBelongToThisCommunity() ? (
+				<div className="p-4 w-full flex justify-between items-center bg-base-200 z-10 border-top border-base-300">
+					<p className="text-base text-zinc-600">{t("becomeAMemberToType")}</p>
+					<button
+						type="button"
+						className="btn btn-primary"
+						onClick={() => joinCommunity(selectedCommunity?._id as string)}
+					>
+						{t("enter")}
+					</button>
+				</div>
+			) : (
+				<MessageInput type="community" />
+			)}
 		</div>
 	);
 };
