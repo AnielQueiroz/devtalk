@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useCommunityStore } from "../store/useCommunityStore";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";

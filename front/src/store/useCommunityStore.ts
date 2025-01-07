@@ -144,7 +144,9 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
         }
     },
 
-    getCommunity: async (id: number) => {},
+    getCommunity: async (id: number) => {
+        console.log(id);
+    },
 
     setSelectedCommunity: (community: Community | null) => set({ selectedCommunity: community }),
     
