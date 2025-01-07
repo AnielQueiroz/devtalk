@@ -47,6 +47,8 @@ interface CommunityStoreState {
     selectedCommunity: Community | null;
     isCommunitiesLoading: boolean;
     isMessagesLoading: boolean;
+    isJoining: boolean;
+    hasJoined: boolean;
     setSelectedCommunity: (community: Community | null) => void;
     setCommunities: (communities: Community[] | undefined) => void;
     setCommunitySearchResults: (communities: Community[] | undefined) => void;
@@ -55,6 +57,7 @@ interface CommunityStoreState {
     getMyCommunities: () => Promise<void>;
     getCommunityMessages: (id: string) => Promise<void>;
     sendCommunityMessages: ({ image, text }: { image: string | ArrayBuffer | null; text: string | null; }) => Promise<void>;
+    joinCommunity: (communityId: string) => Promise<void>;
 }
 
 export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
@@ -64,6 +67,8 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
     selectedCommunity: null,
     isCommunitiesLoading: false,
     isMessagesLoading: false,
+    isJoining: false,
+    hasJoined: false,
 
     getCommunities: async (query: string) => {
         set({ isCommunitiesLoading: true });
@@ -145,4 +150,24 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
     setCommunities: (communities: Community[] | undefined) => set({ communities }),
 
     setCommunitySearchResults: (communities: Community[] | undefined) => set({ communitySearchResults: communities }),
+
+    joinCommunity: async (communityId: string) => {
+        if (!communityId) return;
+
+        set({ isJoining: true });
+        try {
+            const res = await axiosInstance.post(`community/join/${communityId}`);
+            toast.success(res.data.message);
+            set({ hasJoined: true });
+        } catch (error) {
+            set({ hasJoined: false})
+            console.log(error);
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+            toast.error("Oops! Something went wrong. Try again later!");
+        } finally {
+            set({ isJoining: false });
+        }
+    },
 }));
