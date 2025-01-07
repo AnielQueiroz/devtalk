@@ -39,6 +39,7 @@ interface User {
 	createdAt: string;
 	updatedAt: string;
 	joinedCommunities: string[];
+	pendingCommunities: string[];
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
