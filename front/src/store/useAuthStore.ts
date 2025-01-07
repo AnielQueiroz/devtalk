@@ -3,6 +3,8 @@ import { axiosInstance } from "../lib/axios.js";
 import toast from "react-hot-toast";
 import { AxiosError } from "axios";
 import { io, type Socket } from "socket.io-client";
+import { useChatStore } from "./useChatStore.js";
+import { useCommunityStore } from "./useCommunityStore.js";
 
 const BASE_URL = import.meta.env.MODE === "development" ? "http://localhost:5001" : "/";
 
@@ -36,6 +38,8 @@ interface User {
 	profilePic?: string;
 	createdAt: string;
 	updatedAt: string;
+	joinedCommunities: string[];
+	pendingCommunities: string[];
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -127,6 +131,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 			toast.success(t("successLogout"));
 
 			get().disconnectSocket();
+			useChatStore.getState().setSelectedUser(null);
+			useCommunityStore.getState().setSelectedCommunity(null);
 		} catch (error: unknown) {
 			if (error instanceof AxiosError) {
 				toast.error(error.response?.data.message);
