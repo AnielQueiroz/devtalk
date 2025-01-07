@@ -21,7 +21,7 @@ const Communities = () => {
 		getMyCommunities();
 	}, [getMyCommunities]);
 
-	if (communities.length === 0) {
+	if (communities && communities.length === 0) {
 		return (
 			<div className="w-full h-full flex flex-col">
 				{/* Título fixo */}
@@ -37,7 +37,7 @@ const Communities = () => {
 				</div>
 
 				{/* Botão fixo flutuante */}
-				<div className="relative bottom-4 right-[-20rem] z-50">
+				<div className="relative bottom-4 right-[-20rem] z-9">
 					<button
 						type="button"
 						className="btn btn-primary rounded-lg"
@@ -49,7 +49,7 @@ const Communities = () => {
 				</div>
 			</div>
 		);
-	}
+	};
 
 	return (
 		<>
@@ -65,7 +65,7 @@ const Communities = () => {
 
 					{/* Conteúdo com scroll */}
 					<div className="flex-1 overflow-y-auto py-3">
-						{communities.map((community) => (
+						{Array.isArray(communities) && communities.map((community) => (
 							<button
 								type="button"
 								key={community._id}
@@ -95,7 +95,7 @@ const Communities = () => {
 					</div>
 
 					{/* Botão fixo flutuante */}
-					{/* <div className="relative bottom-4 right-[-20rem] z-50">
+					<div className="relative bottom-4 right-[-20rem] z-9">
 						<button
 							type="button"
 							className="btn btn-primary rounded-lg"
@@ -104,7 +104,7 @@ const Communities = () => {
 						>
 							<Plus className="size-4" />
 						</button>
-					</div> */}
+					</div>
 				</div>
 			)}
 		</>
