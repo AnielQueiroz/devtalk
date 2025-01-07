@@ -100,7 +100,7 @@ const MessageInput = ({ type }: InputProps) => {
 	};
 
 	return (
-		<div className="p-4 w-full bg-base-200">
+		<div className="p-4 w-full bg-base-200 z-10">
 			{imgPreview && (
 				<div className="mb-3 flex items-center gap-2">
 					<div className="relative">
@@ -156,7 +156,7 @@ const MessageInput = ({ type }: InputProps) => {
 					className="btn bg-primary hover:bg-primary/65 btn-circle"
 					disabled={!text.trim() && !imgPreview}
 				>
-					<Send size={20} />
+					<Send color="#fff" size={20} />
 				</button>
 			</form>
 		</div>
