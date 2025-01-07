@@ -222,7 +222,7 @@ export const deleteGroupMessage = async (req, res) => {
 
 export const getCommunityMessages = async (req, res) => {
     const { id: communityId } = req.params; // ID da comunidade
-    const { page = 1, limit = 20 } = req.query; // Parâmetros de paginação
+    const { page = 1, limit = 30 } = req.query; // Parâmetros de paginação
 
     if (!communityId) return res.status(400).json({ message: "Comunidade é obrigatória!" });
 
@@ -235,7 +235,7 @@ export const getCommunityMessages = async (req, res) => {
 
         // Buscar mensagens com paginação
         const messages = await GroupMessage.find({ communityId })
-            // .sort({ createdAt:  }) // Ordena por data decrescente (mais recente primeiro)
+            .sort({ createdAt: -1 }) // Ordena por data decrescente (mais recente primeiro)
             .skip((page - 1) * limit) // Ignora as mensagens das páginas anteriores
             .limit(Number.parseInt(limit)) // Limita o número de mensagens por página
             .populate('senderId', 'fullName profilePic') // Popula informações do remetente
