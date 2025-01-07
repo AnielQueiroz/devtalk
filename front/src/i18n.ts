@@ -78,6 +78,7 @@ const resources = {
 			requestHere: "Solicitar aqui",
 			becomeAMemberToType: "Seja um membro para escrever",
 			enter: "Entrar",
+			waitingApproval: "Aguardando aprovação...",
 		},
 	},
 	en: {
@@ -153,6 +154,7 @@ const resources = {
 			requestHere: "Request here",
 			becomeAMemberToType: "Become a member to type",
 			enter: "Enter",
+			waitingApproval: "Waiting approval...",
 		},
 	},
 	ja: {
