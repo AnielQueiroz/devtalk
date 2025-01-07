@@ -17,11 +17,11 @@ const CommunityContainer = () => {
 		joinCommunity,
 		isJoining,
 		getMyCommunities,
+		hasJoined,
 	} = useCommunityStore();
-	// const messagesEndRef = useRef<HTMLDivElement>(null);
-	const { authUser, checkAuth } = useAuthStore();
 
-	const [hasJoined, setHasJoined] = useState(false);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const { authUser, checkAuth } = useAuthStore();
 
 	useEffect(() => {
 		if (
@@ -30,6 +30,12 @@ const CommunityContainer = () => {
 		)
 			getCommunityMessages(selectedCommunity._id);
 	}, [selectedCommunity?._id, getCommunityMessages]);
+
+	useEffect(() => {
+		if (messagesEndRef.current && communityMessages.length > 0) {
+			messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+		}
+	});
 
 	// Verifica se o usuário pertence à comunidade
 	const IBelongToThisCommunity = () => {
@@ -52,9 +58,8 @@ const CommunityContainer = () => {
 	const handleJoinCommunity = async (communityId: string) => {
 		if (communityId) {
 			await joinCommunity(communityId);
-			setHasJoined(true);
-			getMyCommunities();
 			checkAuth();
+			getMyCommunities();
 		}
 	};
 
@@ -206,6 +211,8 @@ const CommunityContainer = () => {
 					</div>
 				))}
 
+				<div ref={messagesEndRef} />
+
 				{communityMessages.length === 0 && (
 					<div className="flex flex-col items-center justify-center h-full">
 						<h2 className="text-2xl font-bold mb-4">{t("startChat")}</h2>
@@ -222,13 +229,11 @@ const CommunityContainer = () => {
 					<button
 						type="button"
 						className="btn btn-primary"
-						onClick={() => handleJoinCommunity(selectedCommunity?._id as string)}
+						onClick={() =>
+							handleJoinCommunity(selectedCommunity?._id as string)
+						}
 					>
-						{isJoining ? (
-							<Loading />
-						) : (
-							t("enter")
-						)}
+						{isJoining ? <Loading /> : t("enter")}
 					</button>
 				</div>
 			) : (
