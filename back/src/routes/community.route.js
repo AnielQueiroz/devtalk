@@ -1,6 +1,6 @@
 import express from "express";
 import { protectRoute } from "../middleware/auth.middleware.js";
-import { joinCommunity, leaveCommunity, createCommunity, deleteCommunity, getCommunitiesThatIBelong, getCommunitiesAllOrSearch, addMemberToCommunity, getCommunityMembers, removeMemberFromCommunity, sendGroupMessage, markAllAsReadForUser, getCommunityMessages, deleteGroupMessage } from "../controllers/community.controller.js";
+import { joinCommunity, requestToJoinCommunity, leaveCommunity, createCommunity, deleteCommunity, getCommunitiesThatIBelong, getCommunitiesAllOrSearch, addMemberToCommunity, getCommunityMembers, removeMemberFromCommunity, sendGroupMessage, markAllAsReadForUser, getCommunityMessages, deleteGroupMessage } from "../controllers/community.controller.js";
 
 const router = express.Router();
 
@@ -39,6 +39,9 @@ router.post("/remove-member/:id", protectRoute, removeMemberFromCommunity);
 
 // Rota para entrar em uma comunidade
 router.post("/join/:id", protectRoute, joinCommunity);
+
+// Rota para solicitar para entrar em uma comunidade
+router.post("/join-request/:id", protectRoute, requestToJoinCommunity);
 
 // Rota para sair de uma comunidade
 router.post("/leave/:id", protectRoute, leaveCommunity);
