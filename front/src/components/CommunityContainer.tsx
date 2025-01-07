@@ -15,6 +15,7 @@ const CommunityContainer = () => {
 		isMessagesLoading,
 		communityMessages,
 		joinCommunity,
+		requestTojoinCommunity,
 		isJoining,
 		getMyCommunities,
 		hasJoined,
@@ -92,17 +93,28 @@ const CommunityContainer = () => {
 					<MessageSkeleton />
 					<div className="absolute inset-0 flex items-center justify-center backdrop-blur-md bg-black/30 z-10 opacity-80">
 						<div className="bg-white p-6 rounded-lg shadow-md text-center">
-							<h2 className="text-2xl font-bold mb-2">
+							<h2 className="text-primary text-2xl font-bold mb-2">
 								{t("privateCommunity")}
 							</h2>
 							<p className="text-zinc-600 mb-4">{t("accessDeniedCommunity")}</p>
-							<button
-								type="button"
-								className="btn btn-primary"
-								// onClick={() => joinCommunity(selectedCommunity?._id as string)}
-							>
-								{t("requestToJoin")}
-							</button>
+							{authUser?.pendingCommunities.includes(
+								selectedCommunity?._id as string,
+							) ? (
+								<>
+									<p className="text-zinc-600 mb-4">{t("waitingApproval")}</p>
+									<Loading color="primary" />
+								</>
+							) : (
+								<button
+									type="button"
+									className="btn btn-primary"
+									onClick={() =>
+										requestTojoinCommunity(selectedCommunity?._id as string)
+									}
+								>
+									{isJoining ? <Loading /> : t("requestToJoin")}
+								</button>
+							)}
 						</div>
 					</div>
 				</div>
