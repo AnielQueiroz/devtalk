@@ -18,13 +18,13 @@ export function getReceiverSocketId(userId) {
 // Usada para armazenar os onlines
 const userSocketMap = new Map();
 
-io.on("connection", (conn) => {
-    console.log("⚡ Usuário conectado: ", conn.id);
+io.on("connection", (socket) => {
+    console.log("⚡ Usuário conectado: ", socket.id);
 
-    const userId = conn.handshake.query.userId;
+    const userId = socket.handshake.query.userId;
     if (userId) {
-        userSocketMap.set(userId, conn.id);
-        console.log(`📝 Usuário registrado: ${userId} -> SocketId: ${conn.id}`);
+        userSocketMap.set(userId, socket.id);
+        console.log(`📝 Usuário registrado: ${userId} -> SocketId: ${socket.id}`);
     } else {
         console.log("🚫 userId ausente no handshake.query");
     }
@@ -32,10 +32,20 @@ io.on("connection", (conn) => {
     // io.emit é usado para enviar eventos para todos os clientes conectados
     io.emit("getOnlineUsers", Array.from(userSocketMap.keys()));
     
-    conn.on("disconnect", () => {
-        console.log("🔌 Usuário desconectado: ", conn.id);
+    socket.on("joinCommunity", (communityId) => {
+        const room = `communityId_${communityId}`;	
+        if (!socket.rooms.has(room)) {
+            socket.join(room);
+            console.log(`👥 Usuário ${userId} entrou na comunidade ${communityId}`);
+        } else {
+            console.log(`🚫 Usuário ${userId} ja esta na comunidade ${communityId}`);
+        }
+    });
+
+    socket.on("disconnect", () => {
+        console.log("🔌 Usuário desconectado: ", socket.id);
         for (const [key, value] of userSocketMap.entries()) {
-            if (value === conn.id) {
+            if (value === socket.id) {
                 userSocketMap.delete(key);
                 console.log(`🗑️ Usuário removido: ${key}`);
                 break;
