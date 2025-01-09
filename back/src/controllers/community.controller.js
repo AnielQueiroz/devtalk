@@ -118,12 +118,17 @@ export const sendGroupMessage = async (req, res) => {
     let imageUrl = null;
 
     if (!communityId) return res.status(400).json({ message: "Comunidade é obrigatória!" });
+    if (!text && !image) return res.status(400).json({ message: "Mensagem ou imagem é obrigatória!" });
 
     try {
         if (image) {
-            // upload image
-            const uploadResponse = await cloudinary.uploader.upload(image);
-            imageUrl = uploadResponse.secure_url;
+            try {
+                const uploadResponse = await cloudinary.uploader.upload(image);
+                imageUrl = uploadResponse.secure_url;
+            } catch (error) {
+                console.log("Erro ao enviar imagem: ", error);
+                return res.status(500).json({ message: "Erro ao enviar imagem" });
+            }
         }
 
         // salvar mensagem
@@ -135,7 +140,13 @@ export const sendGroupMessage = async (req, res) => {
         });
 
         // popula com os dados necessários	
-        newMessage = await newMessage.populate("senderId", "fullName profilePic");
+        // newMessage = await newMessage
+        //     .populate("senderId", "fullName profilePic")
+        //     .populate("communityId", "name");
+
+        newMessage = await GroupMessage.findById(newMessage._id)
+            .populate("senderId", "fullName profilePic")
+            .populate("communityId", "name");
 
         // emitir mensagem para membros da comunidade
         io.to(`communityId_${communityId}`).emit("newCommunityMessage", { newMessage });
@@ -179,7 +190,7 @@ export const deleteGroupMessage = async (req, res) => {
         const isAdmin = community.members.some(
             (member) => member.userId.toString() === myId.toString() && member.role === "admin"
         );
-        
+
         if (!isAuthor && !isAdmin) {
             await session.abortTransaction();
             return res.status(403).json({ message: "Você não tem permissão para excluir essa mensagem!" });
@@ -257,7 +268,7 @@ export const markAllAsReadForUser = async (req, res) => {
 
         // 2. Adiciona o usuário ao array isReadBy se ainda não existir
         await GroupMessage.updateMany(
-            { 
+            {
                 communityId,
                 "isReadBy.userId": { $ne: myId } // Filtra onde o usuário não existe no array
             },
@@ -426,7 +437,7 @@ export const leaveCommunity = async (req, res) => {
         // 5. Remover o usuário do lado da comunidade
         community.members = community.members.filter(
             (member) => member.userId.toString() !== myId.toString()
-        );      
+        );
         await community.save();
 
         // 6. Commit na transação
@@ -542,7 +553,7 @@ export const addMemberToCommunity = async (req, res) => {
 
         // Finalizar a transação
         await session.commitTransaction();
-        session.endSession();        
+        session.endSession();
 
         return res.status(200).json({ message: "Usuário adicionado a comunidade com sucesso!" });
     } catch (error) {
