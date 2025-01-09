@@ -44,6 +44,7 @@ interface CommunityStoreState {
     communities: Community[] | [];
     communitySearchResults: Community[] | [];
     communityMessages: Message[];
+    unreadCommunityCounts: Record<string, number>;
     selectedCommunity: Community | null;
     isCommunitiesLoading: boolean;
     isMessagesLoading: boolean;
@@ -52,6 +53,8 @@ interface CommunityStoreState {
     setSelectedCommunity: (community: Community | null) => void;
     setCommunities: (communities: Community[] | undefined) => void;
     setCommunitySearchResults: (communities: Community[] | undefined) => void;
+    subscribeToCommunityMessages: () => void;
+    unsubscribeToCommunityMessages: () => void;
     getCommunities: (query: string) => Promise<void>;
     getCommunity: (id: number) => Promise<void>;
     getMyCommunities: () => Promise<void>;
@@ -65,6 +68,7 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
     communities: [],
     communitySearchResults: [],
     communityMessages: [],
+    unreadCommunityCounts: {},
     selectedCommunity: null,
     isCommunitiesLoading: false,
     isMessagesLoading: false,
@@ -154,6 +158,61 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
 
     setCommunitySearchResults: (communities: Community[] | undefined) => set({ communitySearchResults: communities }),
 
+    subscribeToCommunityMessages: () => {
+        const socket = useAuthStore.getState().socket;
+        const user = useAuthStore.getState().authUser;
+
+        if (!socket) return console.error('Socket não está disponível!');
+        if (!user) return console.error('Usuário não está disponível!');
+
+        // Entrar nas salas das comunidades do usuario
+        if (user.joinedCommunities && user.joinedCommunities.length > 0) {
+            for (const communityId of user.joinedCommunities) {
+                socket.emit('joinCommunity', communityId);
+            }
+        };
+
+        // Remover listerner anterior para evitar duplicidade
+        socket.off("newCommunityMessage");
+
+        // Escutar as mensagens das comunidades
+        socket.on("newCommunityMessage", (data) => {
+            const newMessage = data.newMessage;
+            const { communityMessages, selectedCommunity, unreadCommunityCounts } = get();
+
+            const audio = new Audio("/sounds/community_notification.mp3");
+            audio.play().catch(() => console.error('Erro ao tocar o som'));
+
+            if (newMessage.communityId._id === selectedCommunity?._id) {
+                set({ communityMessages: [...communityMessages || [], newMessage] });    
+            } else {
+                const communityId = newMessage.communityId._id;
+                set({
+                    unreadCommunityCounts: {
+                        ...unreadCommunityCounts,
+                        [communityId]: (unreadCommunityCounts[communityId] || 0) + 1
+                    },
+                });
+
+                // Notificar no navegador menos se eu for o sender
+                if (newMessage.senderId._id !== user._id) {
+                    if (Notification.permission === "granted") {
+                        new Notification(newMessage.communityId.name, {
+                            body: newMessage.text, // Exibe o texto da mensagem
+                            icon: newMessage.profilePic, // Ícone opcional
+                        });
+                    }
+                }
+            }
+        });
+    },
+
+    unsubscribeToCommunityMessages: () => {
+        const socket = useAuthStore.getState().socket;
+        if (!socket) return console.error('Socket não está disponível!');
+        socket.off("newCommunityMessage");
+    },
+    
     joinCommunity: async (communityId: string) => {
         if (!communityId) return;
 

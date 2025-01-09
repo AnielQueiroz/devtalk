@@ -1,5 +1,5 @@
 import cloudinary from "../lib/cloudinary.js";
-import { getReceiverSocketId } from "../lib/socket.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import Community from "../models/community.model.js";
 import GroupMessage from "../models/groupMessage.model.js";
 import User from "../models/user.model.js";
@@ -118,46 +118,38 @@ export const sendGroupMessage = async (req, res) => {
     let imageUrl = null;
 
     if (!communityId) return res.status(400).json({ message: "Comunidade é obrigatória!" });
+    if (!text && !image) return res.status(400).json({ message: "Mensagem ou imagem é obrigatória!" });
 
     try {
         if (image) {
-            // upload image
-            const uploadResponse = await cloudinary.uploader.upload(image);
-            imageUrl = uploadResponse.secure_url;
+            try {
+                const uploadResponse = await cloudinary.uploader.upload(image);
+                imageUrl = uploadResponse.secure_url;
+            } catch (error) {
+                console.log("Erro ao enviar imagem: ", error);
+                return res.status(500).json({ message: "Erro ao enviar imagem" });
+            }
         }
 
         // salvar mensagem
-        const newMessage = await GroupMessage({
+        let newMessage = await GroupMessage.create({
             senderId: myId,
             communityId,
             text,
             image: imageUrl,
         });
 
-        await newMessage.save();
+        // popula com os dados necessários	
+        // newMessage = await newMessage
+        //     .populate("senderId", "fullName profilePic")
+        //     .populate("communityId", "name");
 
-        // enviar mensagem para todos os membros da comunidade
-        // const members = await User.find({ joinedCommunities: communityId});
-        // for (const member of members) {
-        //     const receiverSocketId = getReceiverSocketId(member._id);
-        //     if (receiverSocketId) {
-        //         io.to(receiverSocketId).emit("newGroupMessage", newMessage);
-        //     }
-        // }
+        newMessage = await GroupMessage.findById(newMessage._id)
+            .populate("senderId", "fullName profilePic")
+            .populate("communityId", "name");
 
-        // Emitir mensagem para todos os membros conectados
-        // const community = await Community.findById(communityId).populate('members.userId');
-        // if (!community) {
-        //     return res.status(404).json({ message: "Comunidade não encontrada!" });
-        // }
-
-        // for (const member of community.members) {
-        //     const receiverSocketId = getReceiverSocketId(member.userId.toString());
-        //     if (receiverSocketId) {
-        //         io.to(receiverSocketId).emit('newGroupMessage', newMessage);
-        //     }
-        // }
-
+        // emitir mensagem para membros da comunidade
+        io.to(`communityId_${communityId}`).emit("newCommunityMessage", { newMessage });
         return res.status(201).json({ newMessage });
     } catch (error) {
         console.log("Erro ao enviar mensagem de grupo: ", error);
@@ -198,7 +190,7 @@ export const deleteGroupMessage = async (req, res) => {
         const isAdmin = community.members.some(
             (member) => member.userId.toString() === myId.toString() && member.role === "admin"
         );
-        
+
         if (!isAuthor && !isAdmin) {
             await session.abortTransaction();
             return res.status(403).json({ message: "Você não tem permissão para excluir essa mensagem!" });
@@ -276,7 +268,7 @@ export const markAllAsReadForUser = async (req, res) => {
 
         // 2. Adiciona o usuário ao array isReadBy se ainda não existir
         await GroupMessage.updateMany(
-            { 
+            {
                 communityId,
                 "isReadBy.userId": { $ne: myId } // Filtra onde o usuário não existe no array
             },
@@ -445,7 +437,7 @@ export const leaveCommunity = async (req, res) => {
         // 5. Remover o usuário do lado da comunidade
         community.members = community.members.filter(
             (member) => member.userId.toString() !== myId.toString()
-        );      
+        );
         await community.save();
 
         // 6. Commit na transação
@@ -561,7 +553,7 @@ export const addMemberToCommunity = async (req, res) => {
 
         // Finalizar a transação
         await session.commitTransaction();
-        session.endSession();        
+        session.endSession();
 
         return res.status(200).json({ message: "Usuário adicionado a comunidade com sucesso!" });
     } catch (error) {

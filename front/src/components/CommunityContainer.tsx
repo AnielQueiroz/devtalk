@@ -185,7 +185,7 @@ const CommunityContainer = () => {
 							</time>
 						</div>
 						<div
-							className={`chat-bubble flex flex-col max-w-[50%] ${
+							className={`chat-bubble flex flex-col max-w-[90%] sm:max-w-[90%] xl:max-w-[50%] ${
 								msg.senderId._id === authUser?._id
 									? "bg-primary text-primary-content"
 									: "bg-secondary text-secondary-content"
@@ -212,7 +212,7 @@ const CommunityContainer = () => {
 													</pre>
 												))
 										: msg.text.split("\n").map((line) => (
-												<span key={Math.random()}>
+												<span className="whitespace-pre-wrap break-all" key={Math.random()}>
 													{line}
 													<br />
 												</span>
