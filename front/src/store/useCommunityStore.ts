@@ -180,9 +180,6 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
             const newMessage = data.newMessage;
             const { communityMessages, selectedCommunity, unreadCommunityCounts } = get();
 
-            const audio = new Audio("/sounds/community_notification.mp3");
-            audio.play().catch(() => console.error('Erro ao tocar o som'));
-
             if (newMessage.communityId._id === selectedCommunity?._id) {
                 set({ communityMessages: [...communityMessages || [], newMessage] });    
             } else {
@@ -202,6 +199,9 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
                             icon: newMessage.profilePic, // Ícone opcional
                         });
                     }
+
+                    const audio = new Audio("/sounds/community_notification.mp3");
+					audio.play().catch(() => console.error("Erro ao tocar o som"));
                 }
             }
         });
