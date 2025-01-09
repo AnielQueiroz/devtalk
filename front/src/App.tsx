@@ -15,10 +15,6 @@ import Terms from "./pages/TermsPage"
 import { useChatStore } from "./store/useChatStore"
 import { useCommunityStore } from "./store/useCommunityStore"
 
-if (window.Notification.permission === "default") { 
-  window.Notification.requestPermission();
-};
-
 function App() {
   const { authUser, checkAuth, isCheckingAuth, socket, connectSocket, disconnectSocket } = useAuthStore();
   const { theme } = useThemeStore();
@@ -50,6 +46,11 @@ function App() {
   }, [socket, authUser, subscribeToMessages, unsubscribeFromMessages, subscribeToCommunityMessages, unsubscribeToCommunityMessages]);
  
   if (isCheckingAuth && !authUser) return <LoadingCheck />
+  if (authUser) {
+    if (window.Notification.permission === "default") { 
+      window.Notification.requestPermission();
+    };
+  }
 
   const pathsWithoutNavbar = ["/login", "/signup"];
   const hideNavbar = pathsWithoutNavbar.includes(location.pathname);
