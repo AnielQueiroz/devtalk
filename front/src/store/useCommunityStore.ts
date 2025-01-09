@@ -182,12 +182,11 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
 
             const audio = new Audio("/sounds/community_notification.mp3");
             audio.play().catch(() => console.error('Erro ao tocar o som'));
-            
 
-            if (newMessage.communityId === selectedCommunity?._id) {
+            if (newMessage.communityId._id === selectedCommunity?._id) {
                 set({ communityMessages: [...communityMessages || [], newMessage] });    
             } else {
-                const communityId = newMessage.communityId;
+                const communityId = newMessage.communityId._id;
                 set({
                     unreadCommunityCounts: {
                         ...unreadCommunityCounts,
@@ -195,12 +194,14 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
                     },
                 });
 
-                // Notificar no navegador
-                if (Notification.permission === "granted") {
-                    new Notification(`Nova mensagem em ${newMessage.communityName}`, {
-                        body: newMessage.text, // Exibe o texto da mensagem
-                        icon: newMessage.profilePic, // Ícone opcional
-                    });
+                // Notificar no navegador menos se eu for o sender
+                if (newMessage.senderId._id !== user._id) {
+                    if (Notification.permission === "granted") {
+                        new Notification(newMessage.communityId.name, {
+                            body: newMessage.text, // Exibe o texto da mensagem
+                            icon: newMessage.profilePic, // Ícone opcional
+                        });
+                    }
                 }
             }
         });
