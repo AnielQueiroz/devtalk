@@ -9,6 +9,7 @@ import { useChatStore } from "../store/useChatStore";
 const Communities = () => {
 	const {
 		communities,
+		unreadCommunityCounts,
 		isCommunitiesLoading,
 		selectedCommunity,
 		setSelectedCommunity,
@@ -81,15 +82,23 @@ const Communities = () => {
 							>
 								<div className="relative mx-auto lg:mx-0">
 									<img
-										src={community.photoUrl || "/avatar.png"}
+										src={community.photoUrl || "/users.png"}
 										alt={community.name}
 										className="w-12 h-12 object-cover rounded-full"
 									/>
 								</div>
 
-								<div className="hidden lg:block text-left min-w-0">
+								<div className="flex-1 md:block text-left min-w-0">
 									<div className="font-medium truncate">{community.name}</div>
+									<div className="text-sm text-zinc-400">{community.description}</div>
+								
 								</div>
+
+								{unreadCommunityCounts[community._id] > 0 && (
+									<div className="bg-primary text-sm text-white rounded-full w-6 h-6 flex items-center justify-center">
+										{unreadCommunityCounts[community._id]}
+								  </div>
+								)}
 							</button>
 						))}
 					</div>
