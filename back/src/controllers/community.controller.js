@@ -1,5 +1,5 @@
 import cloudinary from "../lib/cloudinary.js";
-import { getReceiverSocketId } from "../lib/socket.js";
+import { getReceiverSocketId, io } from "../lib/socket.js";
 import Community from "../models/community.model.js";
 import GroupMessage from "../models/groupMessage.model.js";
 import User from "../models/user.model.js";
@@ -127,37 +127,18 @@ export const sendGroupMessage = async (req, res) => {
         }
 
         // salvar mensagem
-        const newMessage = await GroupMessage({
+        let newMessage = await GroupMessage.create({
             senderId: myId,
             communityId,
             text,
             image: imageUrl,
         });
 
-        await newMessage.save();
+        // popula com os dados necessários	
+        newMessage = await newMessage.populate("senderId", "fullName profilePic");
 
-        // enviar mensagem para todos os membros da comunidade
-        // const members = await User.find({ joinedCommunities: communityId});
-        // for (const member of members) {
-        //     const receiverSocketId = getReceiverSocketId(member._id);
-        //     if (receiverSocketId) {
-        //         io.to(receiverSocketId).emit("newGroupMessage", newMessage);
-        //     }
-        // }
-
-        // Emitir mensagem para todos os membros conectados
-        // const community = await Community.findById(communityId).populate('members.userId');
-        // if (!community) {
-        //     return res.status(404).json({ message: "Comunidade não encontrada!" });
-        // }
-
-        // for (const member of community.members) {
-        //     const receiverSocketId = getReceiverSocketId(member.userId.toString());
-        //     if (receiverSocketId) {
-        //         io.to(receiverSocketId).emit('newGroupMessage', newMessage);
-        //     }
-        // }
-
+        // emitir mensagem para membros da comunidade
+        io.to(`communityId_${communityId}`).emit("newCommunityMessage", { newMessage });
         return res.status(201).json({ newMessage });
     } catch (error) {
         console.log("Erro ao enviar mensagem de grupo: ", error);
