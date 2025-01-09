@@ -15,7 +15,9 @@ import Terms from "./pages/TermsPage"
 import { useChatStore } from "./store/useChatStore"
 import { useCommunityStore } from "./store/useCommunityStore"
 
-window.Notification.requestPermission();
+if (window.Notification.permission === "default") { 
+  window.Notification.requestPermission();
+};
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth, socket, connectSocket, disconnectSocket } = useAuthStore();
