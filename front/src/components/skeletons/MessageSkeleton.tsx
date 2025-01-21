@@ -1,8 +1,8 @@
 const MessageSkeleton = () => {
-  const skeletonMessages = Array(6).fill(null);
+  const skeletonMessages = Array(10).fill(null);
 
   return (
-    <div className="overflow-y-auto flex-1 p-4 space-y-4 bg-base-100">
+    <div className="overflow-y-hidden flex-1 p-4 space-y-4 bg-base-100">
       <div>
         {skeletonMessages.map((_, idx) => (
           <div

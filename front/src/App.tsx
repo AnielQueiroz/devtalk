@@ -13,6 +13,7 @@ import { useThemeStore } from "./store/useThemeStore"
 import ThemePage from "./pages/ThemePage"
 import Terms from "./pages/TermsPage"
 import { useChatStore } from "./store/useChatStore"
+import { useCommunityStore } from "./store/useCommunityStore"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth, socket, connectSocket, disconnectSocket } = useAuthStore();
@@ -20,6 +21,7 @@ function App() {
   const location = useLocation();
 
   const { subscribeToMessages, unsubscribeFromMessages } = useChatStore();
+  const { subscribeToCommunityMessages, unsubscribeToCommunityMessages } = useCommunityStore();
 
   useEffect(() => {
     checkAuth();
@@ -29,15 +31,26 @@ function App() {
   }, [checkAuth, connectSocket, disconnectSocket]);
 
   useEffect(() => {
-    if (socket && authUser) {
-      subscribeToMessages()
+    socket?.on("connect", () => {
+      console.log("📡 Socket conectado? ", socket.connected);
+      if (socket.connected && authUser) {
+        subscribeToMessages();
+        subscribeToCommunityMessages();
+      }
+    })
+
+    return () => {
+      unsubscribeToCommunityMessages();
+      unsubscribeFromMessages();
     }
-
-    return () => unsubscribeFromMessages()
-  }, [authUser, socket, subscribeToMessages, unsubscribeFromMessages]);
-
+  }, [socket, authUser, subscribeToMessages, unsubscribeFromMessages, subscribeToCommunityMessages, unsubscribeToCommunityMessages]);
  
   if (isCheckingAuth && !authUser) return <LoadingCheck />
+  if (authUser) {
+    if (window.Notification.permission === "default") { 
+      window.Notification.requestPermission();
+    };
+  }
 
   const pathsWithoutNavbar = ["/login", "/signup"];
   const hideNavbar = pathsWithoutNavbar.includes(location.pathname);

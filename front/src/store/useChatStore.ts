@@ -30,10 +30,7 @@ interface ChatStoreState {
     messages: Messages[];
     users: User[];
     unreadCounts: Record<string, number>;
-    searchResults: {
-        users: User[];
-        communities: Community[];
-    } | null;
+    usersResults: User[] | null;
     selectedUser: User | null;
     selectedCommunity: Community | null;
     isUsersLoading: boolean;
@@ -45,17 +42,18 @@ interface ChatStoreState {
     getMessages: (userId: string) => Promise<void>;
     setSelectedUser: (selectedUser: User | null) => void;
     setSelectedCommunity: (selectedCommunity: Community | null) => void;
+    setUsersResults: (usersResults: User[] | null) => void;
     sendMessage: (message: Messages) => Promise<void>;
     subscribeToMessages: () => void;
     unsubscribeFromMessages: () => void;
-    getSearchResults: (query: string) => Promise<void>;
+    getUsersResults: (query: string) => Promise<void>;
 }
 
 export const useChatStore = create<ChatStoreState>((set, get) => ({
     messages: [],
     users: [],
     unreadCounts: {},
-    searchResults: null,
+    usersResults: null,
     community: [],
     selectedUser: null,
     isUsersLoading: false,
@@ -139,11 +137,11 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
         }
     },
 
-    getSearchResults: async (query: string) => {
+    getUsersResults: async (query: string) => {
         set({ isSearchLoading: true });
         try {
             const res = await axiosInstance.get(`/search/${query}`);
-            set({ searchResults: res.data });
+            set({ usersResults: res.data.users });
         } catch (error: unknown) {
             console.error('Erro ao buscar resultados', error);
             if (error instanceof AxiosError) {
@@ -232,6 +230,8 @@ export const useChatStore = create<ChatStoreState>((set, get) => ({
     },
 
     setSelectedUser: (selectedUser: User | null) => set({ selectedUser }),
+
+    setUsersResults: (usersResults: User[] | null) => set({ usersResults }),
 
     setSelectedCommunity: (selectedCommunity: Community | null) => set({ selectedCommunity }),
 }));

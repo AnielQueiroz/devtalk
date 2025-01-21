@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { t } from "i18next";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -36,7 +36,7 @@ const Chats = () => {
         <div className="w-full h-full flex flex-col">
           {/* titulo */}
           <div className="flex items-center justify-center gap-2 py-[18px] border-b border-primary/30 shrink-0">
-            <Users className="size-6" />
+            <MessageCircle className="size-6" />
             <h1 className="text-lg font-bold">{t("chats")}</h1>
           </div>
           <div className="mt-3 flex justify-between p-2 items-center gap-2">

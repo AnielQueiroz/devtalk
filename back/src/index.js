@@ -6,6 +6,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import searchRoutes from "./routes/search.route.js";
+import communityRoutes from "./routes/community.route.js";
 
 import path from "node:path";
 
@@ -32,6 +33,7 @@ app.use(
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/search", searchRoutes);
+app.use("/api/community", communityRoutes);
 
 if(process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../front/dist")));

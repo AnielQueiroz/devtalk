@@ -1,113 +1,165 @@
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
+import { useCommunityStore } from "../store/useCommunityStore";
 import Loading from "./Loading";
 
 interface User {
-    _id: string;
-    fullName: string;
-    email: string;
-    profilePic?: string;
+  _id: string;
+  fullName: string;
+  name?: string;
+  email: string;
+  profilePic?: string;
+  photoUrl?: string;
 }
 
+interface Community {
+  _id: string;
+  name: string;
+  fullName?: string;
+  description?: string | undefined;
+  photoUrl?: string | undefined;
+  profilePic?: string;
+  isPublic: boolean;
+  tags: Record<string, string>[] | undefined;
+  creatorId: Record<string, string>;
+  createdAt: string;
+}
+
+interface SearchResultsProps {
+  results: (User | Community)[] | null;
+  onSelect: (item: User | Community) => void;
+  type: "user" | "community";
+}
+
+const SearchResults = ({ results, onSelect, type }: SearchResultsProps) => (
+  <div className="space-y-2">
+    {results?.map((item: User | Community) => (
+      <button
+        key={item._id}
+        className="w-full"
+        type="button"
+        onClick={() => onSelect(item)}
+      >
+        <div className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors">
+          <img
+            src={item.profilePic || item.photoUrl || "/avatar.png"}
+            alt={item.fullName || item.name}
+            className="rounded-full size-12 object-cover"
+          />
+          <div>
+            <p className="font-bold text-base-content">
+              {item.fullName || item.name}
+            </p>
+            <p className="badge badge-accent">{t(type)}</p>
+          </div>
+        </div>
+      </button>
+    ))}
+  </div>
+);
+
 const InputSearch = () => {
-	const [search, setSearch] = useState("");
-	const {
-		searchResults,
-		isSearchLoading,
-		getSearchResults,
-		setSelectedUser,
-		setSelectedCommunity,
-	} = useChatStore();
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<"user" | "community">("user");
 
-	useEffect(() => {
-		if (search.length > 2) getSearchResults(search);
-	}, [search, getSearchResults]);
+  const {
+    usersResults,
+    isSearchLoading,
+    getUsersResults,
+    setSelectedUser,
+    setUsersResults,
+  } = useChatStore();
 
-	const handleSelectUser = (user: User) => {
-		setSelectedUser(user);
-		setSelectedCommunity(null);
-		setSearch("");
-	};
+  const { communitySearchResults, setCommunitySearchResults, getCommunities, setSelectedCommunity, isCommunitiesLoading } = useCommunityStore();
 
-	return (
-		<div className="relative w-72">
-			<label className="input input-bordered flex items-center gap-2 w-full">
-				<input
-					type="text"
-					className="grow"
-					placeholder={t("search")}
-					value={search}
-					onChange={(e) => setSearch(e.target.value)}
-				/>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 0 16 16"
-					fill="currentColor"
-					className="h-4 w-4 opacity-70"
-				>
-					<title>{t("search")}</title>
-					<path
-						fillRule="evenodd"
-						d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-						clipRule="evenodd"
-					/>
-				</svg>
-			</label>
+  useEffect(() => {
+    if (search.length > 2) {
+      selectedCategory === "user" ? getUsersResults(search) : getCommunities(search);
+    }
+  }, [search, getUsersResults, getCommunities, selectedCategory]);
 
-			{search.length > 2 &&
-				((isSearchLoading && (
-					<div className="absolute flex justify-center top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
-						<Loading />
-					</div>
-				)) ||
-					(searchResults?.users.length === 0 &&
-						searchResults?.communities.length === 0 && (
-							<div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
-								<p className="text-sm text-base-content text-center">
-									{t("noResults")}
-								</p>
-							</div>
-						)) ||
-					((searchResults?.users?.length ?? 0) > 0 && (
-						<div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
-							<p className="text-sm text-base-content text-center">
-								{t("searchResults")}: {search}
-							</p>
-							{/* divider */}
-							<div className="divider divider-neutral" />
+  const showResults = search.length > 2;
+  const isSearchingAnything = isSearchLoading || isCommunitiesLoading;
 
-							<div className="space-y-2">
-								{searchResults?.users?.map((user) => (
-									<button
-										className="w-full"
-										type="button"
-										key={user._id}
-										onClick={() => handleSelectUser(user)}
-									>
-										<div
-											key={user._id}
-											className="flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-primary/80 transition-colors"
-										>
-											<img
-												src={user.profilePic || "/avatar.png"}
-												alt={user.fullName}
-												className="rounded-full size-12 object-cover"
-											/>
-											<div>
-												<p className="font-bold text-base-content">
-													{user.fullName}
-												</p>
-												<p className="badge badge-accent">{t("user")}</p>
-											</div>
-										</div>
-									</button>
-								))}
-							</div>
-						</div>
-					)))}
-		</div>
-	);
+  const handleSelectItem = (item: User | Community) => {
+    if (selectedCategory === "user") {
+      setSelectedUser(item as User);
+      setSelectedCommunity(null);
+    } else {
+      setSelectedUser(null);
+	    setSelectedCommunity(item as Community);
+    }
+    setSearch("");
+  };
+
+  const handleSelectRadio = (category: "user" | "community") => {
+    setSelectedCategory(category);
+    if (category === "user") setCommunitySearchResults(undefined);
+    if (category === "community") setUsersResults(null);
+  };
+
+  return (
+    <div className="relative w-72">
+      {/* Input e Categorias */}
+      <label className="input input-bordered flex items-center gap-4">
+        <div className="dropdown dropdown-hover">
+          <div className="p-2">{t(selectedCategory)}:</div>
+          <div className="dropdown-content flex flex-col menu bg-base-100 rounded-box w-40 z-[1] p-2 shadow">
+            {["user", "community"].map((category) => (
+              <label
+                key={category}
+                className="w-full flex justify-between items-center gap-2 p-2"
+              >
+                <span>{t(category)}</span>
+                <input
+                  type="radio"
+                  name="radio-category"
+                  className="radio radio-primary"
+                  onClick={() => handleSelectRadio(category as "user" | "community")}
+                  defaultChecked={selectedCategory === category}
+                />
+              </label>
+            ))}
+          </div>
+        </div>
+        <input
+          type="text"
+          className="grow p-2"
+          placeholder={t("search")}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </label>
+
+      {/* Resultados */}
+      {showResults && (
+        <div className="absolute top-full left-0 mt-4 rounded w-72 bg-base-200 p-2 shadow-lg z-10">
+          {isSearchingAnything ? (
+            <div className="flex justify-center">
+              <Loading />
+            </div>
+          ) : usersResults?.length === 0 && communitySearchResults?.length === 0 ? (
+            <p className="text-sm text-base-content text-center">
+              {t("noResults")}
+            </p>
+          ) : (
+            <>
+              <p className="text-sm text-base-content text-center mb-2">
+                {t("searchResults")}: {search}
+              </p>
+              <div className="divider divider-neutral" />
+              <SearchResults
+                results={selectedCategory === "user" ? usersResults : communitySearchResults}
+                onSelect={handleSelectItem}
+                type={selectedCategory}
+              />
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default InputSearch;
