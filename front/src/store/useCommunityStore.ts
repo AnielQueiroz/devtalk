@@ -180,6 +180,8 @@ export const useCommunityStore = create<CommunityStoreState>((set, get) => ({
             const newMessage = data.newMessage;
             const { communityMessages, selectedCommunity, unreadCommunityCounts } = get();
 
+            if (newMessage.senderId._id === user._id) return;
+
             if (newMessage.communityId._id === selectedCommunity?._id) {
                 set({ communityMessages: [...communityMessages || [], newMessage] });    
             } else {

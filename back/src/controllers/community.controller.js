@@ -139,11 +139,6 @@ export const sendGroupMessage = async (req, res) => {
             image: imageUrl,
         });
 
-        // popula com os dados necessários	
-        // newMessage = await newMessage
-        //     .populate("senderId", "fullName profilePic")
-        //     .populate("communityId", "name");
-
         newMessage = await GroupMessage.findById(newMessage._id)
             .populate("senderId", "fullName profilePic")
             .populate("communityId", "name");
