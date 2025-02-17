@@ -38,7 +38,6 @@ const communitySchema = new moongose.Schema(
             {
                 type: moongose.Schema.Types.ObjectId,
                 required: true,
-                unique: true,
                 ref: "Tag"
             }
         ],
