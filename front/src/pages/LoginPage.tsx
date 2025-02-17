@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 const LoginPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
-	const [formData, setFormData] = useState([{ email: "", password: "" }]);
+	const [formData, setFormData] = useState([{ email: "exemplo@email.com", password: "12345678" }]);
 	const { login, isLoggingIn } = useAuthStore();
 	const { t } = useTranslation();
 
